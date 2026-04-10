@@ -1,13 +1,14 @@
 # Internet Programming Project
 
-This repository contains our Internet Programming course project. The current codebase includes a working Node.js/Express backend for authentication and a scaffolded React frontend folder structure. This README explains how to start the project and the proposed architecture going forward.
+This repository contains our Internet Programming course project. The current codebase includes a working Node.js/Express backend for authentication and a bootstrapped React frontend scaffold. This README explains how to run both applications together and how the project is organized.
 
 ## Current Status
 
 - Backend is implemented and runnable.
 - MongoDB is required for the backend.
 - Authentication endpoints are available: register, login, and get current user.
-- Frontend folders have been created, but the frontend application is still a scaffold and is not yet fully bootstrapped in this repository.
+- Frontend structure and dependencies are initialized.
+- Root scripts are available to run frontend and backend together.
 
 ## Tech Stack
 
@@ -21,6 +22,7 @@ This repository contains our Internet Programming course project. The current co
 
 ```text
 Internet-Programming/
+├── package.json             # Root scripts for running both apps together
 ├── backend/
 │   ├── config/              # Database connection and backend configuration
 │   ├── controllers/         # HTTP request handlers
@@ -35,10 +37,12 @@ Internet-Programming/
 │   └── package.json         # Backend dependencies and scripts
 ├── frontend/
 │   ├── public/              # Static frontend assets
+│   │   ├── index.html
+│   │   └── manifest.json
+│   ├── package.json         # Frontend dependencies and scripts
 │   └── src/
 │       ├── components/      # Reusable UI components
 │       ├── context/         # React context providers
-│       ├── hooks/           # Custom hooks
 │       ├── pages/           # Page-level components
 │       ├── routes/          # Frontend route definitions
 │       ├── services/        # API communication layer
@@ -68,7 +72,6 @@ The project follows a layered modular architecture so that each feature remains 
 - `routes/`: client-side navigation.
 - `services/`: calls backend APIs.
 - `context/`: shared application state such as authentication.
-- `hooks/`: reusable frontend logic.
 - `utils/`: formatting and helper logic.
 
 Frontend flow:
@@ -124,6 +127,34 @@ backend/
 - npm
 - MongoDB running locally or via MongoDB Atlas
 
+## Quick Start (Recommended)
+
+Use these commands from the project root to run both frontend and backend.
+
+```bash
+npm install
+npm run install-all
+npm run dev
+```
+
+This starts:
+
+- Backend (nodemon) from `backend/`
+- Frontend React development server from `frontend/`
+
+## Root Scripts
+
+- `npm run dev`: starts both apps at once.
+- `npm run server`: runs backend in development mode (nodemon).
+- `npm run client`: runs the frontend React dev server.
+- `npm run install-all`: installs backend and frontend packages.
+- `npm run build`: builds the frontend production bundle.
+
+Additional helper scripts:
+
+- `npm run install-server`: installs backend dependencies only.
+- `npm run install-client`: installs frontend dependencies only.
+
 ## Backend Setup
 
 1. Open a terminal in the backend folder.
@@ -157,7 +188,7 @@ Development mode with nodemon:
 
 ```bash
 cd backend
-npm run server
+npm run dev
 ```
 
 Production-style start:
@@ -175,7 +206,15 @@ http://localhost:5000
 
 ## Frontend Setup
 
-The frontend directory structure exists, but this repository currently does not include a frontend `package.json` or a completed React bootstrap. That means the backend can be run now, while the frontend still needs to be completed before the full client application can be started.
+The frontend is initialized with React scripts and routing dependencies.
+
+Run frontend only:
+
+```bash
+cd frontend
+npm install
+npm start
+```
 
 Planned frontend environment variable:
 
