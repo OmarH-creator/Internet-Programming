@@ -1,53 +1,63 @@
 const authService = require("../services/authService");
+const {
+  normalizeRegisterInput,
+  normalizeLoginInput,
+  validateRegisterInput,
+  validateLoginInput
+} = require("../utils/authValidation");
 
 const register = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const normalized = normalizeRegisterInput(req.body);
+    const { isValid, errors } = validateRegisterInput(normalized);
 
-    if (!username || !email || !password) {
+    if (!isValid) {
       return res.status(400).json({
         success: false,
-        message: "Please provide username, email, and password"
+        message: "Validation failed",
+        errors
       });
     }
 
-    const user = await authService.registerUser({ username, email, password });
+    const payload = await authService.registerUser(normalized);
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "User registered successfully",
-      data: user
+      data: payload
     });
   } catch (error) {
-    res.status(400).json({
+    return res.status(error.statusCode || 400).json({
       success: false,
-      message: error.message
+      message: error.message || "Registration failed"
     });
   }
 };
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const normalized = normalizeLoginInput(req.body);
+    const { isValid, errors } = validateLoginInput(normalized);
 
-    if (!email || !password) {
+    if (!isValid) {
       return res.status(400).json({
         success: false,
-        message: "Please provide email and password"
+        message: "Validation failed",
+        errors
       });
     }
 
-    const user = await authService.loginUser({ email, password });
+    const payload = await authService.loginUser(normalized);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Login successful",
-      data: user
+      data: payload
     });
   } catch (error) {
-    res.status(401).json({
+    return res.status(error.statusCode || 401).json({
       success: false,
-      message: error.message
+      message: error.message || "Login failed"
     });
   }
 };
@@ -56,14 +66,14 @@ const getMe = async (req, res) => {
   try {
     const user = await authService.getCurrentUser(req.user.id);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      data: user
+      data: { user }
     });
   } catch (error) {
-    res.status(404).json({
+    return res.status(error.statusCode || 404).json({
       success: false,
-      message: error.message
+      message: error.message || "User not found"
     });
   }
 };

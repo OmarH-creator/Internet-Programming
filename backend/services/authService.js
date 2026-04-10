@@ -1,14 +1,38 @@
 const bcrypt = require("bcryptjs");
-const User = require("../models/user");
+const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
 
+const createError = (message, statusCode) => {
+  const err = new Error(message);
+  err.statusCode = statusCode;
+  return err;
+};
+
+const toAuthPayload = (user) => {
+  return {
+    token: generateToken(user._id),
+    user: {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      avatar: user.avatar
+    }
+  };
+};
+
 const registerUser = async ({ username, email, password }) => {
-  const existingUser = await User.findOne({
-    $or: [{ email }, { username }]
+  const existing = await User.findOne({
+    $or: [{ username }, { email }]
   });
 
-  if (existingUser) {
-    throw new Error("User already exists");
+  if (existing) {
+    if (existing.username === username) {
+      throw createError("Username already taken", 409);
+    }
+    if (existing.email === email) {
+      throw createError("Email already in use", 409);
+    }
+    throw createError("User already exists", 409);
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -20,45 +44,40 @@ const registerUser = async ({ username, email, password }) => {
     password: hashedPassword
   });
 
-  return {
-    _id: user._id,
-    username: user.username,
-    email: user.email,
-    avatar: user.avatar,
-    token: generateToken(user._id)
-  };
+  return toAuthPayload(user);
 };
 
-const loginUser = async ({ email, password }) => {
-  const user = await User.findOne({ email });
+const loginUser = async ({ identifier, password }) => {
+  const user = await User.findOne({
+    $or: [{ email: identifier }, { username: identifier }]
+  });
 
   if (!user) {
-    throw new Error("Invalid credentials");
+    throw createError("Invalid credentials", 401);
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
 
   if (!isMatch) {
-    throw new Error("Invalid credentials");
+    throw createError("Invalid credentials", 401);
   }
 
-  return {
-    _id: user._id,
-    username: user.username,
-    email: user.email,
-    avatar: user.avatar,
-    token: generateToken(user._id)
-  };
+  return toAuthPayload(user);
 };
 
 const getCurrentUser = async (userId) => {
   const user = await User.findById(userId).select("-password");
 
   if (!user) {
-    throw new Error("User not found");
+    throw createError("User not found", 404);
   }
 
-  return user;
+  return {
+    id: user._id,
+    username: user.username,
+    email: user.email,
+    avatar: user.avatar
+  };
 };
 
 module.exports = {
