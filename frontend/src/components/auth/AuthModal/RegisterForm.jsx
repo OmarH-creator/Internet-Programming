@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { authService } from "../../../services/authService";
 import EyeIcon from "./icons/EyeIcon";
+import { useAuth } from "../../../context/AuthContext";
 
 function RegisterForm({ onSwitch, onSuccess }) {
+  const { register } = useAuth();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -43,8 +44,10 @@ function RegisterForm({ onSwitch, onSuccess }) {
     setErrors({});
 
     try {
-      const response = await authService.register({ email, username, password });
-      authService.persistSessionFromResponse(response);
+      const result = await register({ email, username, password });
+      if (!result?.success) {
+        throw new Error(result?.message || "Registration failed. Please try again.");
+      }
       onSuccess?.("register");
     } catch (err) {
       const message =
