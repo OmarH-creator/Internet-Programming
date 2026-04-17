@@ -27,11 +27,37 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String,
       default: ""
+    },
+    banner: {
+      type: String,
+      default: ""
+    },
+    bio: {
+      type: String,
+      maxlength: 300
+    },
+    karma: {
+      type: Number,
+      default: 0,
+      min : 0
+    },
+    postKarma: {
+      type: Number,
+      default: 0,
+      min : 0
+    },
+    commentKarma: {
+      type: Number,
+      default: 0,
+      min : 0
     }
   },
   {
     timestamps: true
   }
 );
+
+userSchema.set("toJSON", { virtuals: true });
+userSchema.set("toObject", { virtuals: true });
 
 module.exports = mongoose.model("User", userSchema);
