@@ -8,15 +8,26 @@ const createError = (message, statusCode) => {
   return err;
 };
 
+const toUserResponse = (user) => {
+  return {
+    id: user._id,
+    username: user.username,
+    displayName: user.username,
+    email: user.email,
+    avatar: user.avatar || "",
+    banner: user.banner || "",
+    bio: user.bio || "",
+    karma: user.karma ?? 0,
+    postKarma: user.postKarma ?? 0,
+    commentKarma: user.commentKarma ?? 0,
+    createdAt: user.createdAt
+  };
+};
+
 const toAuthPayload = (user) => {
   return {
     token: generateToken(user._id),
-    user: {
-      id: user._id,
-      username: user.username,
-      email: user.email,
-      avatar: user.avatar
-    }
+    user: toUserResponse(user)
   };
 };
 
@@ -72,12 +83,7 @@ const getCurrentUser = async (userId) => {
     throw createError("User not found", 404);
   }
 
-  return {
-    id: user._id,
-    username: user.username,
-    email: user.email,
-    avatar: user.avatar
-  };
+  return toUserResponse(user);
 };
 
 module.exports = {
