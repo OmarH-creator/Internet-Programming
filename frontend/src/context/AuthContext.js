@@ -131,8 +131,20 @@ export function AuthProvider({ children }) {
         throw new Error("Invalid user response");
       }
 
+      // Ignore stale /me responses if a newer token was saved while this request was in flight.
+      if (authService.getStoredToken() !== token) {
+        dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: false });
+        return;
+      }
+
       saveSession({ token, user });
     } catch (error) {
+      // Do not clear a fresh session due to an older token validation request failing.
+      if (authService.getStoredToken() !== token) {
+        dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: false });
+        return;
+      }
+
       clearSession();
       dispatch({
         type: AUTH_ACTIONS.SET_ERROR,

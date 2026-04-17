@@ -4,12 +4,16 @@ import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 import SuccessView from "./SuccessView";
 
-export default function AuthModal({defaultTab = "login", onClose}) {
+export default function AuthModal({defaultTab = "login", onClose, onSuccess}) {
     const [tab, setTab] = useState(defaultTab);
     const [successMode, setSuccessMode] = useState(null);
 
-    const handleSuccess = (mode) => { setSuccessMode(mode) };
+    const handleSuccess = (mode) => {
+      setSuccessMode(mode);
+      onSuccess?.(mode);
+    };
 
+    
     return (
     <div className="auth-overlay" onClick={e => e.target === e.currentTarget && onClose?.()}>
       <div className="auth-modal">

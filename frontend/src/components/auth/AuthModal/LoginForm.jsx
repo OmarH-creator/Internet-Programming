@@ -1,8 +1,9 @@
 import { useState } from "react";
 import EyeIcon from "./icons/EyeIcon";
-import { authService } from "../../../services/authService";
+import { useAuth } from "../../../context/AuthContext";
 
 function LoginForm({ onSwitch, onClose, onSuccess }) {
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -25,8 +26,10 @@ function LoginForm({ onSwitch, onClose, onSuccess }) {
     setLoading(true);
     setErrors({});
     try {
-      const response = await authService.login({ email, password });
-      authService.persistSessionFromResponse(response);
+      const result = await login({ identifier: email, password });
+      if (!result?.success) {
+        throw new Error(result?.message || "Login failed. Check your credentials.");
+      }
       onSuccess?.("login");
     } catch (err) {
       setErrors({ submit: err.message || "Login failed. Check your credentials." });

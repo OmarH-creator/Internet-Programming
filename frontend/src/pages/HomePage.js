@@ -1,10 +1,27 @@
 import React, { useState } from "react";
 import { AppBar, Toolbar, Typography, Button, Box, Container } from "@mui/material";
 import AuthModal from "../components/auth/AuthModal";
+import UserMenu from "../components/user/UserMenu";
+import { useAuth } from "../context/AuthContext";
 
 function HomePage() {
   const [authOpen, setAuthOpen] = useState(false);
   const [defaultTab, setDefaultTab] = useState("login");
+  const { user, isAuthenticated, logout } = useAuth();
+
+  const handleAuthSuccess = () => {
+    setAuthOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  const handleNavigate = (action) => {
+    // Placeholder for navigation actions from UserMenu
+    console.log("Navigate to:", action);
+  };
+
 
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#030303", color: "#d7dadc" }}>
@@ -21,40 +38,52 @@ function HomePage() {
             reddit
           </Typography>
 
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Button
-              variant="contained"
-              onClick={() => {
-                setDefaultTab("login");
-                setAuthOpen(true);
-              }}
-              sx={{
-                backgroundColor: "#ff4500",
-                borderRadius: "999px",
-                textTransform: "none",
-                fontWeight: 600,
-                "&:hover": { backgroundColor: "#e03d00" },
-              }}
-            >
-              Log In
-            </Button>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            {isAuthenticated && user ? (
+              // ── Authenticated: show avatar + dropdown ──
+              <UserMenu
+                user={user}
+                onLogout={handleLogout}
+                onNavigate={handleNavigate}
+              />
+            ) : (
+              // ── Guest: show Log In / Sign Up buttons ──
+              <>
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    setDefaultTab("login");
+                    setAuthOpen(true);
+                  }}
+                  sx={{
+                    backgroundColor: "#ff4500",
+                    borderRadius: "999px",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    "&:hover": { backgroundColor: "#e03d00" },
+                  }}
+                >
+                  Log In
+                </Button>
 
-            <Button
-              variant="outlined"
-              onClick={() => {
-                setDefaultTab("register");
-                setAuthOpen(true);
-              }}
-              sx={{
-                color: "#d7dadc",
-                borderColor: "#818384",
-                borderRadius: "999px",
-                textTransform: "none",
-                fontWeight: 600,
-              }}
-            >
-              Sign Up
-            </Button>
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    setDefaultTab("register");
+                    setAuthOpen(true);
+                  }}
+                  sx={{
+                    color: "#d7dadc",
+                    borderColor: "#818384",
+                    borderRadius: "999px",
+                    textTransform: "none",
+                    fontWeight: 600,
+                  }}
+                >
+                  Sign Up
+                </Button>
+              </>
+            )}
           </Box>
         </Toolbar>
       </AppBar>
@@ -67,6 +96,7 @@ function HomePage() {
         <AuthModal
           defaultTab={defaultTab}
           onClose={() => setAuthOpen(false)}
+          onSuccess={handleAuthSuccess}
         />
       )}
     </Box>
