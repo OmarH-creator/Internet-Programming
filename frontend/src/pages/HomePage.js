@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AppBar, Toolbar, Typography, Button, Box, Container } from "@mui/material";
 import AuthModal from "../components/auth/AuthModal";
 import UserMenu from "../components/user/UserMenu";
 import { useAuth } from "../context/AuthContext";
 
 function HomePage() {
+  const navigate = useNavigate();
   const [authOpen, setAuthOpen] = useState(false);
   const [defaultTab, setDefaultTab] = useState("login");
   const { user, isAuthenticated, logout } = useAuth();
@@ -18,8 +20,12 @@ function HomePage() {
   };
 
   const handleNavigate = (action) => {
-    // Placeholder for navigation actions from UserMenu
-    console.log("Navigate to:", action);
+    // Route based on action
+    if (action === "profile") {
+      navigate("/profile");
+    } else {
+      console.log("Navigate to:", action);
+    }
   };
 
 
