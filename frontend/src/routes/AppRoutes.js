@@ -8,6 +8,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/profile/:username" element={<ProfilePage />} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
