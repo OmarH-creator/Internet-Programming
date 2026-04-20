@@ -64,8 +64,14 @@ export default function ProfilePage() {
   };
 
   const handleSettingClick = (key) => {
-    // TODO: route to the appropriate settings page
-    console.log("Settings action:", key);
+    // "profile" and "curate" both map to Settings > Profile tab.
+    if (key === "profile" || key === "curate") {
+      navigate("/settings?tab=profile");
+      return;
+    }
+
+    // "avatar" and "modtools" are placeholders until those flows are implemented.
+    console.log("Settings action (not implemented):", key);
   };
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -90,7 +96,7 @@ export default function ProfilePage() {
           <Box>
             <ProfileHero
               username={viewedUsername}
-              avatarUrl={avatarPreview || authUser?.avatarUrl || ""}
+              avatarUrl={avatarPreview || authUser?.avatarUrl || authUser?.avatar || ""}
               isOwner={isOwner}
               tabs={tabs}
               activeTab={activeTab}
@@ -108,7 +114,7 @@ export default function ProfilePage() {
             karma={authUser?.karma ?? 0}
             postKarma={authUser?.postKarma ?? 0}
             createdAt={authUser?.createdAt}
-            bannerUrl={bannerPreview || authUser?.bannerUrl || ""}
+            bannerUrl={bannerPreview || authUser?.bannerUrl || authUser?.banner || ""}
             isOwner={isOwner}
             onBannerChange={handleBannerChange}
             onSettingClick={handleSettingClick}
