@@ -22,12 +22,14 @@ function RegisterForm({ onSwitch, onSuccess }) {
       e.username = "Username must be at least 3 characters";
     } else if (username.length > 20) {
       e.username = "Username cannot exceed 20 characters";
-    } else if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
-      e.username = "Only letters, numbers, _ and - are allowed";
+    } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      e.username = "Only letters, numbers, and underscores are allowed";
     }
 
     if (!password || password.length < 8) {
       e.password = "Password must be at least 8 characters";
+    } else if (!/(?=.*[A-Za-z])(?=.*\d)/.test(password)) {
+      e.password = "Password must contain at least one letter and one number";
     }
 
     return e;
@@ -125,7 +127,7 @@ function RegisterForm({ onSwitch, onSuccess }) {
           placeholder="Choose a username"
           maxLength={20}
         />
-        <p className="username-hint">Letters, numbers, underscores and hyphens only</p>
+        <p className="username-hint">Letters, numbers, and underscores only</p>
         {errors.username && <p className="form-error">⚠ {errors.username}</p>}
       </div>
 

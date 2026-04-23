@@ -1,0 +1,58 @@
+import { useEffect, useState } from "react";
+import { postService } from "../../services/postService";
+
+function PostList({ refresh }) {
+
+  const [posts, setPosts]     = useState([]);  // the list of posts
+  const [loading, setLoading] = useState(true); // are we waiting for the server?
+  const [error, setError]     = useState("");   // did something go wrong?
+
+  // This runs when the component loads, and every time "refresh" changes
+  useEffect(() => {
+    postService.getAllPosts()
+      .then(response => {
+        setPosts(response.data.data); // save the posts
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Failed to load posts");
+        setLoading(false);
+      });
+  }, [refresh]);
+
+  // Show different things depending on state
+  if (loading) return <p style={{ color: "#818384" }}>Loading posts...</p>;
+  if (error)   return <p style={{ color: "#818384" }}>{error}</p>;
+  if (posts.length === 0) return <p style={{ color: "#818384" }}>No posts yet. Be the first!</p>;
+
+  return (
+    <div>
+      {posts.map((post) => (
+        <div key={post._id} style={{ borderBottom: "1px solid #343536", padding: "12px 0" }}>
+
+          {/* Who posted and when */}
+          <p style={{ color: "#818384", fontSize: "12px", margin: "0 0 6px 0" }}>
+            <strong style={{ color: "#d7dadc" }}>u/{post.author?.username}</strong>
+            &nbsp;·&nbsp;
+            {new Date(post.createdAt).toLocaleDateString()}
+          </p>
+
+          {/* Post title */}
+          <h3 style={{ color: "#d7dadc", fontSize: "18px", fontWeight: "500", margin: "0 0 6px 0" }}>
+            {post.title}
+          </h3>
+
+          {/* Post body - only show if it exists */}
+          {post.body && (
+            <p style={{ color: "#d7dadc", fontSize: "14px", margin: 0 }}>
+              {post.body}
+            </p>
+          )}
+
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default PostList;
