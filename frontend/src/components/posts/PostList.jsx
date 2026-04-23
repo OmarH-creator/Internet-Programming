@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import { postService } from "../../services/postService";
+import { useAuth } from "../../context/AuthContext";
 
 function PostList({ refresh }) {
 
-  const [posts, setPosts]     = useState([]);  // the list of posts
-  const [loading, setLoading] = useState(true); // are we waiting for the server?
-  const [error, setError]     = useState("");   // did something go wrong?
+  const [posts, setPosts]     = useState([]);   // the list of posts
+  const [loading, setLoading] = useState(true);  // are we waiting for the server?
+  const [error, setError]     = useState("");    // did something go wrong?
+
+  const { user } = useAuth(); // get the logged in user
 
   // This runs when the component loads, and every time "refresh" changes
   useEffect(() => {
     postService.getAllPosts()
       .then(response => {
-        setPosts(response.data.data); // save the posts
+        setPosts(response.data.data);
         setLoading(false);
       })
       .catch(() => {
@@ -19,6 +22,18 @@ function PostList({ refresh }) {
         setLoading(false);
       });
   }, [refresh]);
+
+  // Delete a post by ID
+  const handleDelete = (postId) => {
+    postService.deletePost(postId)
+      .then(() => {
+        // Remove the deleted post from the list without reloading
+        setPosts(posts.filter(post => post._id !== postId));
+      })
+      .catch(() => {
+        alert("Failed to delete post");
+      });
+  };
 
   // Show different things depending on state
   if (loading) return <p style={{ color: "#818384" }}>Loading posts...</p>;
@@ -44,9 +59,26 @@ function PostList({ refresh }) {
 
           {/* Post body - only show if it exists */}
           {post.body && (
-            <p style={{ color: "#d7dadc", fontSize: "14px", margin: 0 }}>
+            <p style={{ color: "#d7dadc", fontSize: "14px", margin: "0 0 8px 0" }}>
               {post.body}
             </p>
+          )}
+
+          {/* Delete button - only show to the post author */}
+          {user && user.id === post.author?._id && (
+            <button
+              onClick={() => handleDelete(post._id)}
+              style={{
+                backgroundColor: "transparent",
+                border: "none",
+                color: "#ff585b",
+                fontSize: "12px",
+                cursor: "pointer",
+                padding: 0,
+              }}
+            >
+              Delete
+            </button>
           )}
 
         </div>
