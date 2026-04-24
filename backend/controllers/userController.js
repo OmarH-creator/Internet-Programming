@@ -1,4 +1,5 @@
 const userService = require("../services/userService");
+const { uploadBufferToCloudinary } = require("../utils/cloudinaryUpload");
 const {
   normalizeUpdateAccountInput,
   validateUpdateAccountInput,
@@ -80,6 +81,70 @@ const updateProfile = async (req, res) => {
     return res.status(error.statusCode || 400).json({
       success: false,
       message: error.message || "Profile update failed"
+    });
+  }
+};
+
+const uploadAvatar = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Image file is required"
+      });
+    }
+
+    const result = await uploadBufferToCloudinary(
+      req.file.buffer,
+      "reddit-clone/avatars",
+      `avatar_${req.user.id}`
+    );
+
+    const user = await userService.updateMyProfile(req.user.id, {
+      avatar: result.secure_url
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Avatar uploaded successfully",
+      data: { user }
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message || "Avatar upload failed"
+    });
+  }
+};
+
+const uploadBanner = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Image file is required"
+      });
+    }
+
+    const result = await uploadBufferToCloudinary(
+      req.file.buffer,
+      "reddit-clone/banners",
+      `banner_${req.user.id}`
+    );
+
+    const user = await userService.updateMyProfile(req.user.id, {
+      banner: result.secure_url
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Banner uploaded successfully",
+      data: { user }
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message || "Banner upload failed"
     });
   }
 };
@@ -208,5 +273,7 @@ module.exports = {
   changePassword,
   verifyPassword,
   deleteAccount,
-  updatePhoneNumber
+  updatePhoneNumber,
+  uploadAvatar,
+  uploadBanner
 };
