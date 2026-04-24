@@ -7,7 +7,9 @@ const {
   normalizeChangePasswordInput,
   validateChangePasswordInput,
   normalizeDeleteAccountInput,
-  validateDeleteAccountInput
+  validateDeleteAccountInput,
+  normalizeUpdatePhoneInput,
+  validateUpdatePhoneInput
 } = require("../utils/authValidation");
 
 const getMe = async (req, res) => {
@@ -140,10 +142,71 @@ const deleteAccount = async (req, res) => {
   }
 };
 
+const updatePhoneNumber = async (req, res) => {
+  try {
+    const normalized = normalizeUpdatePhoneInput(req.body);
+    const { isValid, errors } = validateUpdatePhoneInput(normalized);
+
+    if (!isValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors
+      });
+    }
+
+    const user = await userService.updateMyPhoneNumber(
+      req.user.id,
+      normalized.password,
+      normalized.phoneNumber
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Phone number updated successfully",
+      data: { user }
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 400).json({
+      success: false,
+      message: error.message || "Phone number update failed"
+    });
+  }
+};
+
+const verifyPassword = async (req, res) => {
+  try {
+    const normalized = normalizeDeleteAccountInput(req.body);
+    const { isValid, errors } = validateDeleteAccountInput(normalized);
+
+    if (!isValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors
+      });
+    }
+
+    await userService.verifyMyPassword(req.user.id, normalized.password);
+
+    return res.status(200).json({
+      success: true,
+      message: "Password verified"
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 400).json({
+      success: false,
+      message: error.message || "Password verification failed"
+    });
+  }
+};
+
 module.exports = {
   getMe,
   updateAccount,
   updateProfile,
   changePassword,
-  deleteAccount
+  verifyPassword,
+  deleteAccount,
+  updatePhoneNumber
 };

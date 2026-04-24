@@ -11,6 +11,8 @@ const normalizeUser = (user) => {
   return {
     ...user,
     avatar: user.avatar || user.avatarUrl || "",
+    phoneNumber: user.phoneNumber || "",
+    gender: user.gender || "",
     banner: user.banner || user.bannerUrl || "",
     avatarUrl: user.avatarUrl || user.avatar || "",
     bannerUrl: user.bannerUrl || user.banner || "",

@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema(
       required: [true, "Password is required"],
       minlength: 8
     },
+    phoneNumber: {
+      type: String,
+      trim : true,
+      default: ""
+    },
     avatar: {
       type: String,
       default: ""
@@ -35,6 +40,12 @@ const userSchema = new mongoose.Schema(
     bio: {
       type: String,
       maxlength: 300
+    },
+    gender: {
+      type: String,
+      trim: true,
+      maxlength: 50,
+      default: ""
     },
     karma: {
       type: Number,

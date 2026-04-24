@@ -13,17 +13,36 @@ const toUserResponse = (user) => {
     username: user.username,
     displayName: user.username,
     email: user.email,
+    phoneNumber: user.phoneNumber || "",
     avatar: user.avatar || "",
     banner: user.banner || "",
     avatarUrl: user.avatar || "",
     bannerUrl: user.banner || "",
     bio: user.bio || "",
+    gender: user.gender || "",
     karma: user.karma ?? 0,
     postKarma: user.postKarma ?? 0,
     commentKarma: user.commentKarma ?? 0,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt
   };
+};
+
+const verifyMyPassword = async (userId, password, options = {}) => {
+  const { user: existingUser, errorMessage = "Password is incorrect" } = options;
+  const user = existingUser || (await User.findById(userId));
+
+  if (!user) {
+    throw createError("User not found", 404);
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
+    throw createError(errorMessage, 401);
+  }
+
+  return { success: true, user };
 };
 
 const getMyProfile = async (userId) => {
@@ -44,6 +63,11 @@ const updateMyAccount = async (userId, payload) => {
   }
 
   if (payload.email !== undefined) {
+    await verifyMyPassword(userId, payload.password || "", {
+      user,
+      errorMessage: "Current password is incorrect"
+    });
+
     const existing = await User.findOne({
       email: payload.email,
       _id: { $ne: userId }
@@ -70,6 +94,7 @@ const updateMyProfile = async (userId, payload) => {
   if (payload.avatar !== undefined) user.avatar = payload.avatar;
   if (payload.banner !== undefined) user.banner = payload.banner;
   if (payload.bio !== undefined) user.bio = payload.bio;
+  if (payload.gender !== undefined) user.gender = payload.gender;
 
   await user.save();
   return toUserResponse(user);
@@ -82,11 +107,10 @@ const changeMyPassword = async (userId, currentPassword, newPassword) => {
     throw createError("User not found", 404);
   }
 
-  const isMatch = await bcrypt.compare(currentPassword, user.password);
-
-  if (!isMatch) {
-    throw createError("Current password is incorrect", 401);
-  }
+  await verifyMyPassword(userId, currentPassword, {
+    user,
+    errorMessage: "Current password is incorrect"
+  });
 
   const salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(newPassword, salt);
@@ -96,20 +120,25 @@ const changeMyPassword = async (userId, currentPassword, newPassword) => {
 };
 
 const deleteMyAccount = async (userId, password) => {
+  await verifyMyPassword(userId, password);
+
+  await User.findByIdAndDelete(userId);
+  return { success: true };
+};
+
+const updateMyPhoneNumber = async (userId, password, phoneNumber) => {
   const user = await User.findById(userId);
 
   if (!user) {
     throw createError("User not found", 404);
   }
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  await verifyMyPassword(userId, password, { user });
 
-  if (!isMatch) {
-    throw createError("Password is incorrect", 401);
-  }
+  user.phoneNumber = phoneNumber;
 
-  await User.findByIdAndDelete(userId);
-  return { success: true };
+  await user.save();
+  return toUserResponse(user);
 };
 
 module.exports = {
@@ -117,5 +146,7 @@ module.exports = {
   updateMyAccount,
   updateMyProfile,
   changeMyPassword,
+  updateMyPhoneNumber,
+  verifyMyPassword,
   deleteMyAccount
 };

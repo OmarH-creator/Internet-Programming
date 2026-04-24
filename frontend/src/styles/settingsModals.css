@@ -1,0 +1,119 @@
+.settings-modal .MuiBackdrop-root {
+  background-color: rgba(0, 0, 0, 0.72);
+}
+
+.settings-modal .MuiDialog-paper {
+  background-color: #11181f;
+  border-radius: 16px;
+  border: 1px solid #1f2a33;
+  color: #d7dadc;
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.45);
+}
+
+.settings-modal-content {
+  padding: 24px !important;
+}
+
+.settings-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.settings-modal-title {
+  font-size: 34px !important;
+  font-weight: 700 !important;
+  color: #d7dadc;
+}
+
+.settings-modal-close {
+  background-color: #26313a !important;
+  color: #d7dadc !important;
+}
+
+.settings-modal-close:hover {
+  background-color: #2f3b45 !important;
+}
+
+.settings-modal-subtitle {
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+  color: #b8c2cc;
+  margin-bottom: 20px !important;
+}
+
+.settings-modal-note {
+  font-size: 13px !important;
+  line-height: 1.7 !important;
+  color: #b8c2cc;
+  margin-bottom: 20px !important;
+}
+
+.settings-modal-input .MuiOutlinedInput-root {
+  border-radius: 10px;
+  background-color: #26313a;
+  color: #d7dadc;
+}
+
+.settings-modal-input .MuiOutlinedInput-root fieldset {
+  border: none;
+}
+
+.settings-modal-input .MuiInputBase-input {
+  color: #d7dadc;
+}
+
+.settings-modal-input .MuiInputBase-input::placeholder {
+  color: #9fb0be;
+  opacity: 1;
+}
+
+.settings-modal-input .MuiFormHelperText-root {
+  color: #ff6b6b;
+  margin-left: 4px;
+}
+
+.settings-modal-error {
+  font-size: 13px !important;
+  color: #ff6b6b;
+  margin-bottom: 12px !important;
+}
+
+.settings-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.settings-modal-btn {
+  border-radius: 999px !important;
+  text-transform: none !important;
+  font-weight: 700 !important;
+  background-color: #2f3a43 !important;
+  color: #d7dadc !important;
+}
+
+.settings-modal-btn:hover {
+  background-color: #3a4752 !important;
+}
+
+.settings-modal-btn.Mui-disabled {
+  background-color: #2a2f35 !important;
+  color: #8b98a5 !important;
+}
+
+.settings-modal-btn-danger {
+  background-color: #d93900 !important;
+  color: #ffffff !important;
+}
+
+.settings-modal-btn-danger:hover {
+  background-color: #e04a1a !important;
+}
+
+.settings-modal-btn-danger.Mui-disabled {
+  background-color: #7a2b17 !important;
+  color: #ffd7cc !important;
+}
