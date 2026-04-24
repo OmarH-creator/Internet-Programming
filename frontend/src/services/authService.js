@@ -5,6 +5,24 @@ const USER_KEY = "auth_user";
 
 const extractPayload = (response) => response?.data?.data || response?.data || {};
 
+const normalizeUser = (user) => {
+  if (!user) return null;
+
+  return {
+    ...user,
+    avatar: user.avatar || user.avatarUrl || "",
+    phoneNumber: user.phoneNumber || "",
+    gender: user.gender || "",
+    banner: user.banner || user.bannerUrl || "",
+    avatarUrl: user.avatarUrl || user.avatar || "",
+    bannerUrl: user.bannerUrl || user.banner || "",
+    bio: user.bio || "",
+    karma: user.karma ?? 0,
+    postKarma: user.postKarma ?? 0,
+    commentKarma: user.commentKarma ?? 0
+  };
+};
+
 export const authService = {
   login: (credentials) => api.post("/auth/login", credentials),
 
@@ -26,7 +44,7 @@ export const authService = {
     }
 
     try {
-      return JSON.parse(raw);
+      return normalizeUser(JSON.parse(raw));
     } catch {
       localStorage.removeItem(USER_KEY);
       return null;
@@ -36,7 +54,7 @@ export const authService = {
   persistSessionFromResponse: (response) => {
     const payload = extractPayload(response);
     const token = payload?.token;
-    const user = payload?.user;
+    const user = normalizeUser(payload?.user);
 
     if (!token || !user) {
       throw new Error("Invalid authentication response format");
