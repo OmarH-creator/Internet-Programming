@@ -20,12 +20,17 @@ function HomePage() {
   };
 
   const handleNavigate = (action) => {
-    // Route based on action
     if (action === "profile") {
       navigate("/profile");
-    } else {
-      console.log("Navigate to:", action);
+      return;
     }
+
+    if (action === "settings") {
+      navigate("/settings");
+      return;
+    }
+
+    console.log("Navigate to:", action);
   };
 
 
