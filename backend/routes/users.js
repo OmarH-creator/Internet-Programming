@@ -10,7 +10,8 @@ const {
   updatePhoneNumber,
   deleteAccount,
   uploadAvatar,
-  uploadBanner
+  uploadBanner,
+  toggleCommunity
 } = require("../controllers/userController");
 
 const { protect } = require("../middleware/auth");
@@ -25,5 +26,6 @@ router.post("/me/avatar-upload", protect, upload.single("image"), uploadAvatar);
 router.post("/me/banner-upload", protect, upload.single("image"), uploadBanner);
 router.patch("/me/phone-number", protect, updatePhoneNumber);
 router.delete("/me", protect, deleteAccount);
+router.post("/me/communities/toggle", protect, toggleCommunity);
 
 module.exports = router;

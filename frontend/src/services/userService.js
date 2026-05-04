@@ -26,5 +26,6 @@ export const userService = {
   },
 
   changePassword: (payload) => api.patch("/users/me/password", payload),
-  deleteAccount: (payload) => api.delete("/users/me", { data: payload })
+  deleteAccount: (payload) => api.delete("/users/me", { data: payload }),
+  toggleCommunity: (payload) => api.post("/users/me/communities/toggle", payload)
 };

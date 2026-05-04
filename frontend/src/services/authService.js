@@ -19,7 +19,8 @@ const normalizeUser = (user) => {
     bio: user.bio || "",
     karma: user.karma ?? 0,
     postKarma: user.postKarma ?? 0,
-    commentKarma: user.commentKarma ?? 0
+    commentKarma: user.commentKarma ?? 0,
+    joinedCommunities: user.joinedCommunities || []
   };
 };
 

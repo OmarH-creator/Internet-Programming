@@ -23,6 +23,7 @@ const toUserResponse = (user) => {
     karma: user.karma ?? 0,
     postKarma: user.postKarma ?? 0,
     commentKarma: user.commentKarma ?? 0,
+    joinedCommunities: user.joinedCommunities || [],
     createdAt: user.createdAt,
     updatedAt: user.updatedAt
   };
@@ -141,6 +142,24 @@ const updateMyPhoneNumber = async (userId, password, phoneNumber) => {
   return toUserResponse(user);
 };
 
+const toggleCommunity = async (userId, communityName) => {
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw createError("User not found", 404);
+  }
+
+  const index = user.joinedCommunities.indexOf(communityName);
+  if (index === -1) {
+    user.joinedCommunities.push(communityName);
+  } else {
+    user.joinedCommunities.splice(index, 1);
+  }
+
+  await user.save();
+  return toUserResponse(user);
+};
+
 module.exports = {
   getMyProfile,
   updateMyAccount,
@@ -148,5 +167,6 @@ module.exports = {
   changeMyPassword,
   updateMyPhoneNumber,
   verifyMyPassword,
-  deleteMyAccount
+  deleteMyAccount,
+  toggleCommunity
 };

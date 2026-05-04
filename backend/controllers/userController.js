@@ -266,6 +266,32 @@ const verifyPassword = async (req, res) => {
   }
 };
 
+const toggleCommunity = async (req, res) => {
+  try {
+    const { communityName } = req.body;
+    
+    if (!communityName || typeof communityName !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Community name is required and must be a string"
+      });
+    }
+
+    const user = await userService.toggleCommunity(req.user.id, communityName);
+
+    return res.status(200).json({
+      success: true,
+      message: "Community toggled successfully",
+      data: { user }
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 400).json({
+      success: false,
+      message: error.message || "Failed to toggle community"
+    });
+  }
+};
+
 module.exports = {
   getMe,
   updateAccount,
@@ -275,5 +301,6 @@ module.exports = {
   deleteAccount,
   updatePhoneNumber,
   uploadAvatar,
-  uploadBanner
+  uploadBanner,
+  toggleCommunity
 };

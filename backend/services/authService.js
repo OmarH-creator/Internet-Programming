@@ -24,6 +24,7 @@ const toUserResponse = (user) => {
     karma: user.karma ?? 0,
     postKarma: user.postKarma ?? 0,
     commentKarma: user.commentKarma ?? 0,
+    joinedCommunities: user.joinedCommunities || [],
     createdAt: user.createdAt,
     updatedAt: user.updatedAt
   };
