@@ -97,7 +97,7 @@ function HomePage() {
         </Toolbar>
       </AppBar>
 
-      <Container sx={{ py: 4, maxWidth: "740px" }}>
+      <Box sx={{ py: 4, maxWidth: "700px", margin: "0 auto", px: 2 }}>
         {/* Show create form only if logged in */}
         {isAuthenticated && (
           <Box sx={{ mb: 3 }}>
@@ -107,7 +107,7 @@ function HomePage() {
 
         {/* Post list */}
         <PostList refresh={refresh} />
-      </Container>
+      </Box>
 
       {authOpen && (
         <AuthModal

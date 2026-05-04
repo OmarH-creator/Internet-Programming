@@ -2,9 +2,9 @@ const postService = require ('../services/postService')
 
 const createPost = async (req, res) => {
     try {
-        const { title, body } = req.body;
+        const { title, body, image } = req.body;
         const authorId = req.user._id;
-        const post = await postService.createPost({ title, body, authorId });
+        const post = await postService.createPost({ title, body, authorId, image });
         return res.status(201).json({
             success: true,
             message: "Post created successfully",
@@ -64,9 +64,47 @@ const deletePost = async (req, res) => {
     }
 };
 
+// Handle upvote
+const upvotePost = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const userId = req.user._id;
+        const post = await postService.upvotePost(postId, userId);
+        return res.status(200).json({
+            success: true,
+            data: post
+        });
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// Handle downvote
+const downvotePost = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const userId = req.user._id;
+        const post = await postService.downvotePost(postId, userId);
+        return res.status(200).json({
+            success: true,
+            data: post
+        });
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 module.exports = {
     createPost,
     getAllPosts,
     getPostByID,
     deletePost,
+    upvotePost,
+    downvotePost,
 };

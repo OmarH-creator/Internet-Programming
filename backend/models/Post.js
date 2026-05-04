@@ -14,12 +14,27 @@ const postSchema = new mongoose.Schema(
             maxlength: 10000,
             default: "",
         },
+        // Image URL from Cloudinary
+        image: {
+            type: String,
+            default: "",
+        },
         author: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
         
         },
+        // Array of user IDs who upvoted this post
+        upvotes: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }],
+        // Array of user IDs who downvoted this post
+        downvotes: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }],
         
     },
         {
