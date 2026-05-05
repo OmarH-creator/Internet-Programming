@@ -141,6 +141,43 @@ const updateMyPhoneNumber = async (userId, password, phoneNumber) => {
   return toUserResponse(user);
 };
 
+// Get all posts by username
+const getUserPosts = async (username) => {
+  // Find user by username
+  const user = await User.findOne({ username });
+  
+  if (!user) {
+    throw createError("User not found", 404);
+  }
+
+  // Get all posts by this user
+  const Post = require("../models/Post");
+  const posts = await Post.find({ author: user._id })
+    .populate("author", "username avatar")
+    .sort({ createdAt: -1 }); // newest first
+
+  return posts;
+};
+
+// Get all comments by username
+const getUserComments = async (username) => {
+  // Find user by username
+  const user = await User.findOne({ username });
+  
+  if (!user) {
+    throw createError("User not found", 404);
+  }
+
+  // Get all comments by this user
+  const Comment = require("../models/Comment");
+  const comments = await Comment.find({ author: user._id })
+    .populate("author", "username avatar")
+    .populate("post", "title")
+    .sort({ createdAt: -1 }); // newest first
+
+  return comments;
+};
+
 module.exports = {
   getMyProfile,
   updateMyAccount,
@@ -148,5 +185,7 @@ module.exports = {
   changeMyPassword,
   updateMyPhoneNumber,
   verifyMyPassword,
-  deleteMyAccount
+  deleteMyAccount,
+  getUserPosts,
+  getUserComments
 };

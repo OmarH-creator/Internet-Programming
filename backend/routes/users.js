@@ -10,7 +10,9 @@ const {
   updatePhoneNumber,
   deleteAccount,
   uploadAvatar,
-  uploadBanner
+  uploadBanner,
+  getUserPosts,
+  getUserComments
 } = require("../controllers/userController");
 
 const { protect } = require("../middleware/auth");
@@ -25,5 +27,9 @@ router.post("/me/avatar-upload", protect, upload.single("image"), uploadAvatar);
 router.post("/me/banner-upload", protect, upload.single("image"), uploadBanner);
 router.patch("/me/phone-number", protect, updatePhoneNumber);
 router.delete("/me", protect, deleteAccount);
+
+// Get user's posts and comments
+router.get("/:username/posts", getUserPosts);
+router.get("/:username/comments", getUserComments);
 
 module.exports = router;

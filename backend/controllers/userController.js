@@ -266,6 +266,42 @@ const verifyPassword = async (req, res) => {
   }
 };
 
+// Get user's posts by username
+const getUserPosts = async (req, res) => {
+  try {
+    const username = req.params.username;
+    const posts = await userService.getUserPosts(username);
+
+    return res.status(200).json({
+      success: true,
+      data: posts
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 404).json({
+      success: false,
+      message: error.message || "Failed to get user posts"
+    });
+  }
+};
+
+// Get user's comments by username
+const getUserComments = async (req, res) => {
+  try {
+    const username = req.params.username;
+    const comments = await userService.getUserComments(username);
+
+    return res.status(200).json({
+      success: true,
+      data: comments
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 404).json({
+      success: false,
+      message: error.message || "Failed to get user comments"
+    });
+  }
+};
+
 module.exports = {
   getMe,
   updateAccount,
@@ -275,5 +311,7 @@ module.exports = {
   deleteAccount,
   updatePhoneNumber,
   uploadAvatar,
-  uploadBanner
+  uploadBanner,
+  getUserPosts,
+  getUserComments
 };

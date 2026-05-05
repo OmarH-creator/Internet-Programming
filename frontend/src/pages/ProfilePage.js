@@ -139,7 +139,7 @@ export default function ProfilePage() {
               onAvatarChange={handleAvatarChange}
             />
 
-            <ProfileFeed activeTab={activeTab} />
+            <ProfileFeed activeTab={activeTab} username={viewedUsername} />
           </Box>
 
           {/* Right sidebar */}
