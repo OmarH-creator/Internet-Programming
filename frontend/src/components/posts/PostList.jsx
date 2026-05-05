@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { postService } from "../../services/postService";
 import { useAuth } from "../../context/AuthContext";
 
-function PostList({ refresh }) {
+function PostList({ refresh, communityId }) {
 
   const navigate = useNavigate();
   const [posts, setPosts]     = useState([]);   // the list of posts
@@ -14,9 +14,10 @@ function PostList({ refresh }) {
 
   const { user } = useAuth(); // get the logged in user
 
-  // This runs when the component loads, and every time "refresh" changes
+  // This runs when the component loads, and every time "refresh" or "communityId" changes
   useEffect(() => {
-    postService.getAllPosts()
+    setLoading(true);
+    postService.getAllPosts(communityId)
       .then(response => {
         setPosts(response.data.data);
         setLoading(false);
@@ -25,7 +26,7 @@ function PostList({ refresh }) {
         setError("Failed to load posts");
         setLoading(false);
       });
-  }, [refresh]);
+  }, [refresh, communityId]);
 
   // Delete a post by ID
   const handleDelete = (postId) => {

@@ -7,7 +7,7 @@ const createError = (message, statusCode) => {
     return error;
 };
 
-const createPost = async ({title, body, authorId, image}) =>{
+const createPost = async ({title, body, authorId, image, communityId}) =>{
     // Upload image to Cloudinary if provided
     let imageUrl = "";
     if (image) {
@@ -18,14 +18,17 @@ const createPost = async ({title, body, authorId, image}) =>{
         title,
         body,
         image: imageUrl,
-        author: authorId
+        author: authorId,
+        community: communityId || null
     });
     return post;
 };
 
-const getAllPosts = async () => {
-    const posts = await Post.find()
+const getAllPosts = async (communityId) => {
+    const query = communityId ? { community: communityId } : {};
+    const posts = await Post.find(query)
         .populate ("author", "username avatar")
+        .populate ("community", "name")
         .sort({createdAt: -1});
     
     // Add comment count to each post
@@ -45,7 +48,8 @@ const getAllPosts = async () => {
 
 const getPostByID = async (postId) => {
     const post = await Post.findById(postId)
-        .populate("author", "username avatar");
+        .populate("author", "username avatar")
+        .populate("community", "name");
     if (!post) {
         throw createError("Post not found", 404);
     }

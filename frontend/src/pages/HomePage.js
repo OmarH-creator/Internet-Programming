@@ -53,6 +53,12 @@ function HomePage() {
           </Typography>
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Button 
+              sx={{ color: '#d7dadc', textTransform: 'none' }}
+              onClick={() => navigate("/communities")}
+            >
+              Communities
+            </Button>
             {isAuthenticated && user ? (
               // ── Authenticated: show avatar + dropdown ──
               <UserMenu

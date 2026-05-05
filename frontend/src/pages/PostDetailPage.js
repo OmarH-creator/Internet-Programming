@@ -224,9 +224,15 @@ function PostDetailPage() {
           >
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "20px" }}>
-            r/test
+          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "20px", flexGrow: 1 }}>
+            {post.community ? `r/${post.community.name}` : 'r/test'}
           </Typography>
+          <Button 
+            sx={{ color: '#d7dadc', textTransform: 'none' }}
+            onClick={() => navigate("/communities")}
+          >
+            Communities
+          </Button>
         </Toolbar>
       </AppBar>
 

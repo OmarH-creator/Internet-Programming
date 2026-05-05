@@ -2,9 +2,9 @@ const postService = require ('../services/postService')
 
 const createPost = async (req, res) => {
     try {
-        const { title, body, image } = req.body;
+        const { title, body, image, communityId } = req.body;
         const authorId = req.user._id;
-        const post = await postService.createPost({ title, body, authorId, image });
+        const post = await postService.createPost({ title, body, authorId, image, communityId });
         return res.status(201).json({
             success: true,
             message: "Post created successfully",
@@ -20,7 +20,8 @@ const createPost = async (req, res) => {
 
 const getAllPosts = async (req, res) => {
     try {
-        const posts = await postService.getAllPosts();
+        const { communityId } = req.query;
+        const posts = await postService.getAllPosts(communityId);
         return res.status(200).json({
             success: true,
             data: posts,});

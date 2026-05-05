@@ -1,12 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { postService } from "../../services/postService";
+import { communityService } from "../../services/communityService";
 
-function CreatePostForm({ onPostCreated }) {
+function CreatePostForm({ onPostCreated, communityId: initialCommunityId }) {
   // Store what the user types
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [image, setImage] = useState(null); // Store selected image file
   const [imagePreview, setImagePreview] = useState(""); // Show image preview
+  const [communityId, setCommunityId] = useState(initialCommunityId || "");
+  const [communities, setCommunities] = useState([]);
+
+  useEffect(() => {
+    if (!initialCommunityId) {
+      communityService.getAllCommunities()
+        .then(response => {
+          setCommunities(response.data.data);
+        })
+        .catch(err => console.error("Failed to fetch communities", err));
+    }
+  }, [initialCommunityId]);
 
   // Tab selection: "text" or "image"
   const [postType, setPostType] = useState("text");
@@ -47,7 +60,7 @@ function CreatePostForm({ onPostCreated }) {
 
     try {
       // Call the backend
-      await postService.createPost({ title, body, image });
+      await postService.createPost({ title, body, image, communityId });
 
       // Clear the form
       setTitle("");
@@ -101,6 +114,20 @@ function CreatePostForm({ onPostCreated }) {
         maxLength={300}
         style={styles.input}
       />
+
+      {/* Community select - only if not already in a community */}
+      {!initialCommunityId && (
+        <select 
+          value={communityId} 
+          onChange={(e) => setCommunityId(e.target.value)}
+          style={styles.input}
+        >
+          <option value="">Select a community (optional)</option>
+          {communities.map(c => (
+            <option key={c._id} value={c._id}>r/{c.name}</option>
+          ))}
+        </select>
+      )}
 
       {/* Show different content based on tab */}
       {postType === "text" ? (
