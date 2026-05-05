@@ -25,4 +25,7 @@ export const postService = {
     // Vote functions
     upvote: (postId) => api.post(`/posts/${postId}/upvote`),
     downvote: (postId) => api.post(`/posts/${postId}/downvote`),
+
+    // AI Summarize function
+    summarize: (postId) => api.post(`/posts/${postId}/summarize`),
 }

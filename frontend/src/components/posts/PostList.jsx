@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { postService } from "../../services/postService";
 import { useAuth } from "../../context/AuthContext";
+import PostSummary from "./PostSummary";
 
 function PostList({ refresh }) {
 
@@ -161,6 +162,11 @@ function PostList({ refresh }) {
               }}
             />
           )}
+
+          {/* AI Summary Component */}
+          <div onClick={(e) => e.stopPropagation()}>
+            <PostSummary postId={post._id} initialSummary={post.summary} />
+          </div>
 
           {/* Vote buttons at the bottom - horizontal layout */}
           <div 

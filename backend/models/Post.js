@@ -35,6 +35,16 @@ const postSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }],
+        // AI-generated summary of the post
+        summary: {
+            type: String,
+            default: null,
+        },
+        // Flag to indicate if summary is being generated
+        isSummarizing: {
+            type: Boolean,
+            default: false,
+        },
         
     },
         {

@@ -1,4 +1,5 @@
 const postService = require ('../services/postService')
+const { summarizePost } = require('../services/aiService')
 
 const createPost = async (req, res) => {
     try {
@@ -100,6 +101,69 @@ const downvotePost = async (req, res) => {
     }
 };
 
+// AI Summarization endpoint
+const generateSummary = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const Post = require('../models/Post');
+        
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({
+                success: false,
+                message: "Post not found"
+            });
+        }
+
+        // If summary already exists, return it
+        if (post.summary) {
+            return res.status(200).json({
+                success: true,
+                message: "Summary already exists",
+                data: {
+                    postId: post._id,
+                    summary: post.summary,
+                    isNew: false
+                }
+            });
+        }
+
+        // Set isSummarizing flag
+        post.isSummarizing = true;
+        await post.save();
+
+        try {
+            // Generate summary using AI
+            const summary = await summarizePost(post.title, post.body);
+            
+            // Save summary to post
+            post.summary = summary;
+            post.isSummarizing = false;
+            await post.save();
+
+            return res.status(200).json({
+                success: true,
+                message: "Summary generated successfully",
+                data: {
+                    postId: post._id,
+                    summary: summary,
+                    isNew: true
+                }
+            });
+        } catch (error) {
+            // Reset isSummarizing flag on error
+            post.isSummarizing = false;
+            await post.save();
+            throw error;
+        }
+    } catch (error) {
+        return res.status(error.statusCode || 400).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 module.exports = {
     createPost,
     getAllPosts,
@@ -107,4 +171,5 @@ module.exports = {
     deletePost,
     upvotePost,
     downvotePost,
+    generateSummary,
 };
