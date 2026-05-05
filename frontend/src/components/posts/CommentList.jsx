@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import ProfileCircle from "../common/ProfileCircle";
 
 // Simple component to show list of comments
 function CommentList({ comments }) {
@@ -28,38 +29,8 @@ function CommentList({ comments }) {
         >
           {/* Who commented and when */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-            {/* Profile image circle */}
-            <div style={{
-              width: "20px",
-              height: "20px",
-              borderRadius: "50%",
-              backgroundColor: "#ff4500",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              overflow: "hidden",
-              flexShrink: 0
-            }}>
-              {comment.author?.avatar ? (
-                <img
-                  src={comment.author.avatar}
-                  alt={comment.author.username}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover"
-                  }}
-                />
-              ) : (
-                <span style={{
-                  color: "#ffffff",
-                  fontSize: "10px",
-                  fontWeight: "700"
-                }}>
-                  {comment.author?.username?.charAt(0).toUpperCase() || "?"}
-                </span>
-              )}
-            </div>
+            {/* Profile circle - reusable component */}
+            <ProfileCircle user={comment.author} size={20} />
 
             {/* Username and date */}
             <p style={{ color: "#818384", fontSize: "12px", margin: "0" }}>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { postService } from "../../services/postService";
 import { useAuth } from "../../context/AuthContext";
+import ProfileCircle from "../common/ProfileCircle";
 
 // Reusable component to show a single post
 function PostCard({ post, onPostDeleted, showFullContent = false }) {
@@ -77,38 +78,8 @@ function PostCard({ post, onPostDeleted, showFullContent = false }) {
     >
       {/* Author and date */}
       <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-        {/* Profile image circle */}
-        <div style={{
-          width: "24px",
-          height: "24px",
-          borderRadius: "50%",
-          backgroundColor: "#ff4500",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
-          flexShrink: 0
-        }}>
-          {currentPost.author?.avatar ? (
-            <img
-              src={currentPost.author.avatar}
-              alt={currentPost.author.username}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover"
-              }}
-            />
-          ) : (
-            <span style={{
-              color: "#ffffff",
-              fontSize: "12px",
-              fontWeight: "700"
-            }}>
-              {currentPost.author?.username?.charAt(0).toUpperCase() || "?"}
-            </span>
-          )}
-        </div>
+        {/* Profile circle - reusable component */}
+        <ProfileCircle user={currentPost.author} size={24} />
 
         {/* Username and date */}
         <p style={{ color: "#818384", fontSize: "12px", margin: "0" }}>
