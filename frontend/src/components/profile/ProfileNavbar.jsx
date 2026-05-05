@@ -14,7 +14,15 @@ export default function ProfileNavbar({ searchScope = "" }) {
 	const [defaultTab, setDefaultTab] = useState("login");
 
 	const handleNavigate = (action) => {
-		if (action === "profile") navigate("/profile");
+		if (action === "profile") {
+			navigate("/profile");
+			return;
+		}
+
+		if (action === "settings") {
+			navigate("/settings");
+			return;
+		}
 	};
 
 	return (

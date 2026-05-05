@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import ProfilePage from "../pages/ProfilePage";
 import PostDetailPage from "../pages/PostDetailPage";
+import SettingsPage from "../pages/SettingsPage";
 
 function AppRoutes() {
   return (
@@ -11,6 +12,7 @@ function AppRoutes() {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/profile/:username" element={<ProfilePage />} />
       <Route path="/post/:postId" element={<PostDetailPage />} />
+      <Route path="/settings" element={<SettingsPage />} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

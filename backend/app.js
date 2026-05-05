@@ -6,6 +6,7 @@ const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
 
 
+const userRoutes = require("./routes/users");
 
 const app = express();
 
@@ -38,4 +39,5 @@ app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 
 
+app.use("/api/users", userRoutes);
 module.exports = app;

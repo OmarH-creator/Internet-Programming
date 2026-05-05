@@ -14,13 +14,18 @@ const toUserResponse = (user) => {
     username: user.username,
     displayName: user.username,
     email: user.email,
+    phoneNumber: user.phoneNumber || "",
     avatar: user.avatar || "",
     banner: user.banner || "",
+    avatarUrl: user.avatar || "",
+    bannerUrl: user.banner || "",
     bio: user.bio || "",
+    gender: user.gender || "",
     karma: user.karma ?? 0,
     postKarma: user.postKarma ?? 0,
     commentKarma: user.commentKarma ?? 0,
-    createdAt: user.createdAt
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt
   };
 };
 
