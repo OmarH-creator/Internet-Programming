@@ -4,11 +4,14 @@ import { AppBar, Toolbar, Typography, Button, Box, Container } from "@mui/materi
 import AuthModal from "../components/auth/AuthModal";
 import UserMenu from "../components/user/UserMenu";
 import { useAuth } from "../context/AuthContext";
+import CreatePostForm from "../components/posts/CreatePostForm";
+import PostList from "../components/posts/PostList";
 
 function HomePage() {
   const navigate = useNavigate();
   const [authOpen, setAuthOpen] = useState(false);
   const [defaultTab, setDefaultTab] = useState("login");
+  const [refresh, setRefresh] = useState(0);
   const { user, isAuthenticated, logout } = useAuth();
 
   const handleAuthSuccess = () => {
@@ -35,7 +38,7 @@ function HomePage() {
 
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#030303", color: "#d7dadc" }}>
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#0E1113", color: "#d7dadc" }}>
       <AppBar
         position="static"
         elevation={0}
@@ -45,7 +48,7 @@ function HomePage() {
         }}
       >
         <Toolbar sx={{ minHeight: "56px", justifyContent: "space-between" }}>
-          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "30px" }}>
             reddit
           </Typography>
 
@@ -99,9 +102,17 @@ function HomePage() {
         </Toolbar>
       </AppBar>
 
-      <Container sx={{ py: 4 }}>
-        <Typography sx={{ color: "#818384" }}>Public homepage placeholder</Typography>
-      </Container>
+      <Box sx={{ py: 4, maxWidth: "700px", margin: "0 auto", px: 2 }}>
+        {/* Show create form only if logged in */}
+        {isAuthenticated && (
+          <Box sx={{ mb: 3 }}>
+            <CreatePostForm onPostCreated={() => setRefresh(r => r + 1)} />
+          </Box>
+        )}
+
+        {/* Post list */}
+        <PostList refresh={refresh} />
+      </Box>
 
       {authOpen && (
         <AuthModal
