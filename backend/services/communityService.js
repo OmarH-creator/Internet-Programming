@@ -61,10 +61,22 @@ const leaveCommunity = async (communityId, userId) => {
     return community;
 };
 
+const searchCommunities = async (query) => {
+    if (!query) return [];
+    const communities = await Community.find({
+        name: { $regex: query, $options: 'i' }
+    })
+    .select('_id name avatar members')
+    .limit(5);
+
+    return communities;
+};
+
 module.exports = {
     createCommunity,
     getAllCommunities,
     getCommunityById,
     joinCommunity,
-    leaveCommunity
+    leaveCommunity,
+    searchCommunities
 };

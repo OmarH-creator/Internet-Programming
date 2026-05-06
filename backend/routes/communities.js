@@ -6,10 +6,12 @@ const {
     getAllCommunities,
     getCommunityById,
     joinCommunity,
-    leaveCommunity
+    leaveCommunity,
+    searchCommunities
 } = require("../controllers/communityController");
 const { protect } = require("../middleware/auth");
 
+router.get("/search", searchCommunities);
 router.get("/", getAllCommunities);
 router.get("/:id", getCommunityById);
 router.post("/", protect, createCommunity);

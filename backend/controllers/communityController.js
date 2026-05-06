@@ -85,10 +85,28 @@ const leaveCommunity = async (req, res) => {
     }
 };
 
+const searchCommunities = async (req, res) => {
+    try {
+        const query = req.query.q;
+        const communities = await communityService.searchCommunities(query);
+        
+        return res.status(200).json({
+            success: true,
+            data: { communities },
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Search failed",
+        });
+    }
+};
+
 module.exports = {
     createCommunity,
     getAllCommunities,
     getCommunityById,
     joinCommunity,
     leaveCommunity,
+    searchCommunities,
 };

@@ -1,16 +1,38 @@
-import React from "react";
-import { Box, Typography, List, ListItem, ListItemAvatar, Avatar, ListItemText, Link, Button } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, List, ListItem, ListItemAvatar, Avatar, ListItemText, Link, Button, CircularProgress } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 import "../../styles/layout.css";
+import { communityService } from "../../services/communityService";
+
+const FALLBACK_COLORS = ["#FF4500", "#FF69B4", "#003791", "#A3AAAE", "#FF8C00", "#46D160", "#0DD3BB", "#2259FF"];
 
 function RightSidebar() {
-  const popularCommunities = [
-    { name: "r/AskMen", members: "7,244,505 members", color: "#FF4500" },
-    { name: "r/AskWomen", members: "5,681,227 members", color: "#FF69B4" },
-    { name: "r/PS4", members: "5,523,183 members", color: "#003791" },
-    { name: "r/apple", members: "6,358,868 members", color: "#A3AAAE" },
-    { name: "r/NBA2k", members: "761,370 members", color: "#FF8C00" },
-  ];
+  const navigate = useNavigate();
+  const [popularCommunities, setPopularCommunities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCommunities = async () => {
+      try {
+        const response = await communityService.getAllCommunities();
+        if (response.data && response.data.data) {
+          const communities = response.data.data;
+          
+          // Sort by number of members descending and take top 5
+          const sorted = communities.sort((a, b) => (b.members?.length || 0) - (a.members?.length || 0)).slice(0, 5);
+          
+          setPopularCommunities(sorted);
+        }
+      } catch (error) {
+        console.error("Failed to fetch communities:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCommunities();
+  }, []);
 
   return (
     <Box className="right-sidebar-container">
@@ -30,28 +52,50 @@ function RightSidebar() {
         </Typography>
 
         <List disablePadding>
-          {popularCommunities.map((community, index) => (
-            <ListItem 
-              key={community.name} 
-              disableGutters 
-              className="community-list-item"
-            >
-              <ListItemAvatar sx={{ minWidth: 48 }}>
-                <Avatar sx={{ bgcolor: community.color, width: 32, height: 32, fontSize: "14px", fontWeight: "bold" }}>
-                  {community.name.charAt(2)}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText 
-                primary={community.name} 
-                secondary={
-                  <Typography sx={{ fontSize: "12px", color: "#ffffff", display: "block" }}>
-                    {community.members}
-                  </Typography>
-                } 
-                primaryTypographyProps={{ fontSize: "14px", fontWeight: 600, color: "#d7dadc" }}
-              />
-            </ListItem>
-          ))}
+          {loading ? (
+            <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
+              <CircularProgress size={24} sx={{ color: "#818384" }} />
+            </Box>
+          ) : popularCommunities.length === 0 ? (
+            <Typography sx={{ color: "#818384", fontSize: "14px", py: 1 }}>
+              No communities found.
+            </Typography>
+          ) : (
+            popularCommunities.map((community, index) => {
+              const displayName = community.name.startsWith("r/") ? community.name : `r/${community.name}`;
+              const avatarLetter = community.name.replace(/^r\//i, '').charAt(0).toUpperCase();
+              const memberCount = community.members?.length || 0;
+              const bgColor = FALLBACK_COLORS[index % FALLBACK_COLORS.length];
+
+              return (
+                <ListItem 
+                  key={community._id || community.name} 
+                  disableGutters 
+                  button
+                  onClick={() => navigate(`/community/${community._id}`)}
+                  className="community-list-item"
+                >
+                  <ListItemAvatar sx={{ minWidth: 48 }}>
+                    <Avatar 
+                      src={community.avatar || undefined}
+                      sx={{ bgcolor: bgColor, width: 32, height: 32, fontSize: "14px", fontWeight: "bold" }}
+                    >
+                      {!community.avatar && avatarLetter}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText 
+                    primary={displayName} 
+                    secondary={
+                      <Typography sx={{ fontSize: "12px", color: "#ffffff", display: "block" }}>
+                        {memberCount.toLocaleString()} member{memberCount !== 1 ? 's' : ''}
+                      </Typography>
+                    } 
+                    primaryTypographyProps={{ fontSize: "14px", fontWeight: 600, color: "#d7dadc" }}
+                  />
+                </ListItem>
+              );
+            })
+          )}
         </List>
         <Button variant="text" className="community-see-more-btn">
           See more

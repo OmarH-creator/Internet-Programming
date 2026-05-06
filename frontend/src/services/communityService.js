@@ -6,4 +6,5 @@ export const communityService = {
     createCommunity: (communityData) => api.post('/communities', communityData),
     joinCommunity: (communityId) => api.post(`/communities/${communityId}/join`),
     leaveCommunity: (communityId) => api.post(`/communities/${communityId}/leave`),
+    searchCommunities: (query) => api.get(`/communities/search?q=${query}`),
 };
