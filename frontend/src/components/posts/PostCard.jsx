@@ -76,23 +76,27 @@ function PostCard({ post, onPostDeleted, showFullContent = false }) {
       onMouseEnter={(e) => !showFullContent && (e.currentTarget.style.backgroundColor = "#1a1a1b")}
       onMouseLeave={(e) => !showFullContent && (e.currentTarget.style.backgroundColor = "transparent")}
     >
-      {/* Author and date */}
-      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-        {/* Profile circle - reusable component */}
-        <ProfileCircle user={currentPost.author} size={24} />
+      {/* Community and Author */}
+      <div style={{ marginBottom: "8px" }}>
+        {/* Community name - BOLD and on top */}
+        {currentPost.community && (
+          <p style={{ color: "#d7dadc", fontSize: "14px", fontWeight: "700", margin: "0 0 4px 0" }}>
+            r/{currentPost.community.name}
+          </p>
+        )}
+        
+        {/* Author and date - below community */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {/* Profile circle */}
+          <ProfileCircle user={currentPost.author} size={20} />
 
-        {/* Username, community, and date */}
-        <p style={{ color: "#818384", fontSize: "12px", margin: "0" }}>
-          <strong style={{ color: "#d7dadc" }}>u/{currentPost.author?.username}</strong>
-          {currentPost.community && (
-            <>
-              &nbsp;in&nbsp;
-              <strong style={{ color: "#0079d3" }}>r/{currentPost.community.name}</strong>
-            </>
-          )}
-          &nbsp;·&nbsp;
-          {new Date(currentPost.createdAt).toLocaleDateString()}
-        </p>
+          {/* Username and date */}
+          <p style={{ color: "#818384", fontSize: "12px", margin: "0" }}>
+            u/{currentPost.author?.username}
+            &nbsp;·&nbsp;
+            {new Date(currentPost.createdAt).toLocaleDateString()}
+          </p>
+        </div>
       </div>
 
       {/* Title */}
