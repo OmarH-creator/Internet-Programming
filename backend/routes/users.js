@@ -13,7 +13,8 @@ const {
   uploadBanner,
   getUserPosts,
   getUserComments,
-  searchUsers
+  searchUsers,
+  getUserByUsername
 } = require("../controllers/userController");
 
 const { protect } = require("../middleware/auth");
@@ -33,5 +34,8 @@ router.delete("/me", protect, deleteAccount);
 // Get user's posts and comments
 router.get("/:username/posts", getUserPosts);
 router.get("/:username/comments", getUserComments);
+
+// Get user profile by username (must be after specific routes)
+router.get("/:username", getUserByUsername);
 
 module.exports = router;

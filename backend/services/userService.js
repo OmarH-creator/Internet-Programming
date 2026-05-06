@@ -193,6 +193,17 @@ const getUserComments = async (username) => {
   return comments;
 };
 
+// Get user profile by username
+const getUserByUsername = async (username) => {
+  const user = await User.findOne({ username }).select("-password");
+  
+  if (!user) {
+    throw createError("User not found", 404);
+  }
+
+  return toUserResponse(user);
+};
+
 module.exports = {
   getMyProfile,
   searchUsers,
@@ -203,5 +214,6 @@ module.exports = {
   verifyMyPassword,
   deleteMyAccount,
   getUserPosts,
-  getUserComments
+  getUserComments,
+  getUserByUsername
 };

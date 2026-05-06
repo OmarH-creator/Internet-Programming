@@ -319,6 +319,24 @@ const getUserComments = async (req, res) => {
   }
 };
 
+// Get user profile by username
+const getUserByUsername = async (req, res) => {
+  try {
+    const username = req.params.username;
+    const user = await userService.getUserByUsername(username);
+
+    return res.status(200).json({
+      success: true,
+      data: { user }
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 404).json({
+      success: false,
+      message: error.message || "User not found"
+    });
+  }
+};
+
 module.exports = {
   getMe,
   searchUsers,
@@ -331,5 +349,6 @@ module.exports = {
   uploadAvatar,
   uploadBanner,
   getUserPosts,
-  getUserComments
+  getUserComments,
+  getUserByUsername
 };

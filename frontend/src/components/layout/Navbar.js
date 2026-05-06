@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AppBar, Toolbar, Typography, Button, Box, InputBase, IconButton, Menu, MenuItem, ListItemIcon, ListItemText, List, ListItem, ListItemAvatar, Avatar } from "@mui/material";
-import axios from "axios";
+import api from "../../services/api";
 import SearchIcon from "@mui/icons-material/Search";
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -34,7 +34,7 @@ function Navbar({ searchScope = "" }) {
       if (searchQuery.trim()) {
         setIsSearching(true);
         try {
-          const res = await axios.get(`http://localhost:5001/api/users/search?q=${searchQuery}`);
+          const res = await api.get(`/users/search?q=${searchQuery}`);
           setSearchResults(res.data.data.users);
           setShowSearchDropdown(true);
         } catch (error) {
