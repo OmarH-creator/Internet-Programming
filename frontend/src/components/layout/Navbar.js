@@ -92,9 +92,6 @@ function Navbar({ searchScope = "" }) {
           
           {/* Logo */}
           <Box className="navbar-logo-container" onClick={() => navigate("/")}>
-            <Box className="navbar-logo-icon">
-              <Typography sx={{ color: "white", fontWeight: "bold", fontSize: 18 }}>r</Typography>
-            </Box>
             <Typography variant="h6" className="navbar-logo-text">
               reddit
             </Typography>
