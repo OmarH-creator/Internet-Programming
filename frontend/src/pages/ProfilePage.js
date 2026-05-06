@@ -4,7 +4,7 @@ import { Box, Container } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import { userService } from "../services/userService";
 
-import ProfileNavbar from "../components/profile/ProfileNavbar";
+import Navbar from "../components/layout/Navbar";
 import ProfileLeftPanel from "../components/profile/ProfileLeftPanel";
 import ProfileHero from "../components/profile/ProfileHero";
 import ProfileFeed from "../components/profile/ProfileFeed";
@@ -110,51 +110,56 @@ export default function ProfilePage() {
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#030303", color: "#d7dadc" }}>
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#030303", color: "#d7dadc", display: "flex", flexDirection: "column" }}>
       {/* Navbar */}
-      <ProfileNavbar searchScope={viewedUsername} />
+      <Navbar searchScope={viewedUsername} />
 
-      <Container maxWidth="xl" sx={{ py: 3 }}>
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", lg: "260px minmax(0, 1fr) 340px" },
-            gap: 3,
-            alignItems: "start"
-          }}
-        >
-          {/* Left sidebar (placeholder) */}
-          <ProfileLeftPanel />
+      <Box sx={{ display: "flex", flexGrow: 1, pt: "56px" }}>
+        {/* Left sidebar (flush to the left) */}
+        <ProfileLeftPanel />
 
-          {/* Center — hero + feed */}
-          <Box>
-            <ProfileHero
-              username={viewedUsername}
-              avatarUrl={avatarPreview || authUser?.avatarUrl || authUser?.avatar || ""}
-              isOwner={isOwner}
-              tabs={tabs}
-              activeTab={activeTab}
-              basePath={basePath}
-              onTabChange={handleTabChange}
-              onAvatarChange={handleAvatarChange}
-            />
+        {/* Center content wrapper */}
+        <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
+          <Container maxWidth="lg" sx={{ py: 3 }}>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 1fr) 340px" },
+                gap: 3,
+                alignItems: "start"
+              }}
+            >
+              {/* Center — hero + feed */}
+              <Box>
+                <ProfileHero
+                  username={viewedUsername}
+                  avatarUrl={avatarPreview || authUser?.avatarUrl || authUser?.avatar || ""}
+                  isOwner={isOwner}
+                  tabs={tabs}
+                  activeTab={activeTab}
+                  basePath={basePath}
+                  onTabChange={handleTabChange}
+                  onAvatarChange={handleAvatarChange}
+                />
 
-            <ProfileFeed activeTab={activeTab} />
-          </Box>
+                <ProfileFeed activeTab={activeTab} />
+              </Box>
 
-          {/* Right sidebar */}
-          <ProfileSideCard
-            username={viewedUsername}
-            karma={authUser?.karma ?? 0}
-            postKarma={authUser?.postKarma ?? 0}
-            createdAt={authUser?.createdAt}
-            bannerUrl={bannerPreview || authUser?.bannerUrl || authUser?.banner || ""}
-            isOwner={isOwner}
-            onBannerChange={handleBannerChange}
-            onSettingClick={handleSettingClick}
-          />
+              {/* Right sidebar */}
+              <ProfileSideCard
+                username={viewedUsername}
+                karma={authUser?.karma ?? 0}
+                postKarma={authUser?.postKarma ?? 0}
+                createdAt={authUser?.createdAt}
+                bannerUrl={bannerPreview || authUser?.bannerUrl || authUser?.banner || ""}
+                isOwner={isOwner}
+                onBannerChange={handleBannerChange}
+                onSettingClick={handleSettingClick}
+              />
+            </Box>
+          </Container>
         </Box>
-      </Container>
+      </Box>
     </Box>
   );
 }

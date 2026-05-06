@@ -28,6 +28,23 @@ const getMe = async (req, res) => {
     });
   }
 };
+// part for handeling the search bar 
+const searchUsers = async (req, res) => {
+  try {
+    const query = req.query.q;
+    const users = await userService.searchUsers(query);
+    
+    return res.status(200).json({
+      success: true,
+      data: { users }
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Search failed"
+    });
+  }
+};
 
 const updateAccount = async (req, res) => {
   try {
@@ -268,6 +285,7 @@ const verifyPassword = async (req, res) => {
 
 module.exports = {
   getMe,
+  searchUsers,
   updateAccount,
   updateProfile,
   changePassword,

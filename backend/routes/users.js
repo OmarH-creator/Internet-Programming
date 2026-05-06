@@ -10,13 +10,15 @@ const {
   updatePhoneNumber,
   deleteAccount,
   uploadAvatar,
-  uploadBanner
+  uploadBanner,
+  searchUsers
 } = require("../controllers/userController");
 
 const { protect } = require("../middleware/auth");
 const upload = require("../middleware/upload");
 
 router.get("/me", protect, getMe);
+router.get("/search", searchUsers);
 router.patch("/me/account", protect, updateAccount);
 router.patch("/me/profile", protect, updateProfile);
 router.patch("/me/password", protect, changePassword);
