@@ -81,9 +81,15 @@ function PostCard({ post, onPostDeleted, showFullContent = false }) {
         {/* Profile circle - reusable component */}
         <ProfileCircle user={currentPost.author} size={24} />
 
-        {/* Username and date */}
+        {/* Username, community, and date */}
         <p style={{ color: "#818384", fontSize: "12px", margin: "0" }}>
           <strong style={{ color: "#d7dadc" }}>u/{currentPost.author?.username}</strong>
+          {currentPost.community && (
+            <>
+              &nbsp;in&nbsp;
+              <strong style={{ color: "#0079d3" }}>r/{currentPost.community.name}</strong>
+            </>
+          )}
           &nbsp;·&nbsp;
           {new Date(currentPost.createdAt).toLocaleDateString()}
         </p>

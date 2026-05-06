@@ -3,21 +3,23 @@ import { postService } from "../../services/postService";
 import PostCard from "./PostCard";
 
 // Simple component to show list of posts
-function PostList({ refresh, posts: propsPosts, onPostDeleted }) {
+// Can show: all posts, community posts, or user posts
+function PostList({ refresh, posts: userPosts, onPostDeleted, communityId }) {
+  // State to store posts
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // If posts are passed as props, use them (for profile page)
-  // Otherwise, fetch all posts (for home page)
+  // Load posts when component loads or when inputs change
   useEffect(() => {
-    if (propsPosts) {
-      // Use posts from props (profile page)
-      setPosts(propsPosts);
+    // If userPosts provided, use them (for profile page)
+    if (userPosts) {
+      setPosts(userPosts);
       setLoading(false);
     } else {
-      // Fetch all posts (home page)
-      postService.getAllPosts()
+      // Otherwise, fetch posts from server
+      // communityId is optional - if provided, only get that community's posts
+      postService.getAllPosts(communityId)
         .then(response => {
           setPosts(response.data.data);
           setLoading(false);
@@ -27,18 +29,18 @@ function PostList({ refresh, posts: propsPosts, onPostDeleted }) {
           setLoading(false);
         });
     }
-  }, [refresh, propsPosts]);
+  }, [refresh, userPosts, communityId]);
 
-  // Handle post deleted
+  // When a post is deleted
   const handlePostDeleted = () => {
-    if (propsPosts) {
-      // If using props, call parent callback
+    if (userPosts) {
+      // If using userPosts, tell parent to reload
       if (onPostDeleted) {
         onPostDeleted();
       }
     } else {
-      // If fetching posts, reload
-      postService.getAllPosts()
+      // Otherwise, reload posts ourselves
+      postService.getAllPosts(communityId)
         .then(response => {
           setPosts(response.data.data);
         })
@@ -48,10 +50,10 @@ function PostList({ refresh, posts: propsPosts, onPostDeleted }) {
     }
   };
 
-  // Show loading
+  // Show loading message
   if (loading) return <p style={{ color: "#818384" }}>Loading posts...</p>;
   
-  // Show error
+  // Show error message
   if (error) return <p style={{ color: "#818384" }}>{error}</p>;
   
   // Show empty message
