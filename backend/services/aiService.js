@@ -25,8 +25,8 @@ const summarizePost = async (title, body) => {
     try {
         // Initialize GenAI with API key each time to ensure fresh connection
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        // Use gemini-2.0-flash which is stable and widely available
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        // Use gemma-3-2b model
+        const model = genAI.getGenerativeModel({ model: "gemma-3-2b" });
 
         const content = `Title: ${title}\n\nContent: ${body}`;
         
