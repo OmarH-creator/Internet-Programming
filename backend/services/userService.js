@@ -140,6 +140,21 @@ const updateMyPhoneNumber = async (userId, password, phoneNumber) => {
   await user.save();
   return toUserResponse(user);
 };
+ // this part is for the search bar 
+const searchUsers = async (query) => {
+  if (!query) return [];
+  const users = await User.find({
+    username: { $regex: query, $options: 'i' }
+  })
+    .select('_id username avatar')
+    .limit(10);
+  
+  return users.map(user => ({
+    id: user._id,
+    username: user.username,
+    avatarUrl: user.avatar || ""
+  }));
+};
 
 // Get all posts by username
 const getUserPosts = async (username) => {
@@ -180,6 +195,7 @@ const getUserComments = async (username) => {
 
 module.exports = {
   getMyProfile,
+  searchUsers,
   updateMyAccount,
   updateMyProfile,
   changeMyPassword,
