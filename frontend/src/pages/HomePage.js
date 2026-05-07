@@ -6,6 +6,7 @@ import UserMenu from "../components/user/UserMenu";
 import { useAuth } from "../context/AuthContext";
 import CreatePostForm from "../components/posts/CreatePostForm";
 import PostList from "../components/posts/PostList";
+import ChatWidget from "../components/chat/ChatWidget";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -121,6 +122,9 @@ function HomePage() {
           onSuccess={handleAuthSuccess}
         />
       )}
+
+      {/* Chat Widget */}
+      <ChatWidget />
     </Box>
   );
 }
