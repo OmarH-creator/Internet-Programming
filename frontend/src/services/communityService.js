@@ -7,4 +7,10 @@ export const communityService = {
     joinCommunity: (communityId) => api.post(`/communities/${communityId}/join`),
     leaveCommunity: (communityId) => api.post(`/communities/${communityId}/leave`),
     searchCommunities: (query) => api.get(`/communities/search?q=${query}`),
+    uploadAvatar: (communityId, formData) => api.post(`/communities/${communityId}/avatar`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    uploadBanner: (communityId, formData) => api.post(`/communities/${communityId}/banner`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
 };
