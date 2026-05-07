@@ -64,7 +64,7 @@ function CommunityDetailPage() {
     };
 
     const isMember = community?.members?.some(member => 
-        (typeof member === 'string' ? member : member._id) === user?._id
+        (typeof member === 'string' ? member : member._id) === (user?._id || user?.id)
     );
 
     return (
@@ -144,7 +144,8 @@ function CommunityDetailPage() {
                 onJoin={handleJoin} 
                 onLeave={handleLeave}
                 isMember={isMember}
-                currentUserId={user?._id}
+                currentUserId={user?._id || user?.id}
+                onUpdate={fetchCommunity}
             />
 
             <Box sx={{ py: 4, maxWidth: "700px", margin: "0 auto", px: 2 }}>
