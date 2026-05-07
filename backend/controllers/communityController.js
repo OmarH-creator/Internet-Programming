@@ -1,4 +1,5 @@
 const communityService = require('../services/communityService');
+const { uploadBufferToCloudinary } = require("../utils/cloudinaryUpload");
 
 const createCommunity = async (req, res) => {
     try {
@@ -102,6 +103,72 @@ const searchCommunities = async (req, res) => {
     }
 };
 
+const uploadCommunityAvatar = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: "Image file is required"
+            });
+        }
+
+        const communityId = req.params.id;
+        const result = await uploadBufferToCloudinary(
+            req.file.buffer,
+            "reddit-clone/community-avatars",
+            `community_avatar_${communityId}`
+        );
+
+        const community = await communityService.updateCommunityProfile(communityId, req.user._id, {
+            avatar: result.secure_url
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Community avatar uploaded successfully",
+            data: community
+        });
+    } catch (error) {
+        return res.status(error.statusCode || 400).json({
+            success: false,
+            message: error.message || "Community avatar upload failed"
+        });
+    }
+};
+
+const uploadCommunityBanner = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: "Image file is required"
+            });
+        }
+
+        const communityId = req.params.id;
+        const result = await uploadBufferToCloudinary(
+            req.file.buffer,
+            "reddit-clone/community-banners",
+            `community_banner_${communityId}`
+        );
+
+        const community = await communityService.updateCommunityProfile(communityId, req.user._id, {
+            banner: result.secure_url
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Community banner uploaded successfully",
+            data: community
+        });
+    } catch (error) {
+        return res.status(error.statusCode || 400).json({
+            success: false,
+            message: error.message || "Community banner upload failed"
+        });
+    }
+};
+
 module.exports = {
     createCommunity,
     getAllCommunities,
@@ -109,4 +176,6 @@ module.exports = {
     joinCommunity,
     leaveCommunity,
     searchCommunities,
+    uploadCommunityAvatar,
+    uploadCommunityBanner
 };
