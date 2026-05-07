@@ -111,7 +111,7 @@ function ChatWidget() {
         style={{
           position: "fixed",
           bottom: "20px",
-          left: "20px",
+          right: "20px",
           backgroundColor: "#ff4500",
           color: "white",
           padding: "12px 20px",
@@ -153,7 +153,7 @@ function ChatWidget() {
           style={{
             position: "fixed",
             bottom: "80px",
-            left: "20px",
+            right: "20px",
             width: "350px",
             height: "500px",
             backgroundColor: "#1a1a1b",

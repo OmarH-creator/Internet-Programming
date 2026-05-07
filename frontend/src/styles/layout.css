@@ -1,0 +1,208 @@
+/* Navbar Styles */
+.navbar-appbar {
+  background-color: #111111 !important;
+  border-bottom: 1px solid #2a3236 !important;
+}
+
+.navbar-toolbar {
+  min-height: 56px !important;
+  justify-content: space-between;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+.navbar-logo-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.navbar-logo-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ff4500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.navbar-logo-text {
+  font-weight: 700 !important;
+  font-size: 22px !important;
+  letter-spacing: -0.5px !important;
+}
+
+.navbar-search-container {
+  display: none;
+  align-items: center;
+  background-color: #272729;
+  border-radius: 999px;
+  padding: 4px 16px;
+  width: 50%;
+  max-width: 600px;
+  border: 1px solid transparent;
+  position: relative;
+}
+@media (min-width: 600px) {
+  .navbar-search-container {
+    display: flex;
+  }
+}
+.navbar-search-container:hover {
+  border-color: #818384;
+  background-color: #1a1a1b;
+}
+.navbar-search-container:focus-within {
+  border-color: #ff4500;
+  background-color: #1a1a1b;
+}
+
+.navbar-search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 8px;
+  background-color: #1a1a1b;
+  border-radius: 8px;
+  border: 1px solid #343536;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.5);
+  z-index: 10;
+}
+
+.navbar-search-item {
+  cursor: pointer;
+}
+.navbar-search-item:hover {
+  background-color: #272729 !important;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar-btn-signup {
+  color: #d7dadc !important;
+  border-color: transparent !important;
+  background-color: #2a3236 !important;
+  border-radius: 999px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  display: none !important;
+}
+@media (min-width: 600px) {
+  .navbar-btn-signup {
+    display: block !important;
+  }
+}
+.navbar-btn-signup:hover {
+  background-color: #3f484d !important;
+}
+
+.navbar-btn-login {
+  background-color: #ff4500 !important;
+  border-radius: 999px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+}
+.navbar-btn-login:hover {
+  background-color: #e03d00 !important;
+  box-shadow: none !important;
+}
+
+/* Left Sidebar Styles */
+.left-sidebar-container {
+  width: 280px;
+  flex-shrink: 0;
+  display: none;
+  border-right: 1px solid #2a3236;
+  height: calc(100vh - 56px);
+  position: sticky;
+  top: 56px;
+  overflow-y: auto;
+  background-color: #111111;
+  color: #d7dadc;
+}
+@media (min-width: 900px) {
+  .left-sidebar-container {
+    display: block;
+  }
+}
+.left-sidebar-container::-webkit-scrollbar {
+  width: 8px;
+}
+.left-sidebar-container::-webkit-scrollbar-thumb {
+  background-color: #3a3a3d;
+  border-radius: 4px;
+}
+
+.sidebar-list-item-btn {
+  border-radius: 8px !important;
+  margin-left: 8px !important;
+  margin-right: 8px !important;
+}
+.sidebar-list-item-btn:hover {
+  background-color: #272729 !important;
+}
+.sidebar-list-item-btn.active {
+  background-color: #272729 !important;
+}
+
+/* Right Sidebar Styles */
+.right-sidebar-container {
+  width: 320px;
+  flex-shrink: 0;
+  display: none;
+  height: calc(100vh - 56px);
+  position: sticky;
+  top: 56px;
+  overflow-y: auto;
+  background-color: #111111;
+  color: #d7dadc;
+  padding-top: 24px;
+  padding-right: 24px;
+}
+@media (min-width: 1200px) {
+  .right-sidebar-container {
+    display: block;
+  }
+}
+.right-sidebar-container::-webkit-scrollbar {
+  display: none;
+}
+
+.popular-communities-card {
+  background-color: #000000ff;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid #2a3236;
+  margin-bottom: 24px;
+}
+
+.community-list-item {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+}
+.community-list-item:hover {
+  background-color: #272729 !important;
+}
+
+.community-see-more-btn {
+  color: #d7dadc !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  margin-top: 8px !important;
+  padding: 4px 8px !important;
+}
+.community-see-more-btn:hover {
+  background-color: #272729 !important;
+}

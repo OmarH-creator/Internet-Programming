@@ -5,6 +5,7 @@ const authRoutes = require("./routes/auth");
 const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
 const messageRoutes = require("./routes/messages");
+const communityRoutes = require("./routes/communities");
 const userRoutes = require("./routes/users");
 
 const app = express();
@@ -37,5 +38,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/communities", communityRoutes);
 app.use("/api/users", userRoutes);
+
 module.exports = app;

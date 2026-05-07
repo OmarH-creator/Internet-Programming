@@ -97,43 +97,47 @@ export default function ProfileSideCard({
 					<StatBlock label="Reddit Age" value={getRedditAge(createdAt)} />
 				</Stack>
 
-				<Divider sx={{ borderColor: "#2a2a2a", mb: 2.5 }} />
+				{isOwner && (
+					<>
+						<Divider sx={{ borderColor: "#2a2a2a", mb: 2.5 }} />
 
-				<Typography
-					sx={{ fontSize: 11, fontWeight: 700, color: "#818384", textTransform: "uppercase", letterSpacing: 0.8, mb: 1.5 }}
-				>
-					Settings
-				</Typography>
+						<Typography
+							sx={{ fontSize: 11, fontWeight: 700, color: "#818384", textTransform: "uppercase", letterSpacing: 0.8, mb: 1.5 }}
+						>
+							Settings
+						</Typography>
 
-				<Stack spacing={1.5}>
-					{SETTINGS_ITEMS.map(({ key, label, sub }) => (
-						<Box key={key} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 1 }}>
-							<Box sx={{ minWidth: 0 }}>
-								<Typography sx={{ fontSize: 14, color: "#d7dadc", fontWeight: 500 }}>{label}</Typography>
-								{sub && <Typography sx={{ fontSize: 11, color: "#818384" }}>{sub}</Typography>}
-							</Box>
-							<Button
-								size="small"
-								variant="outlined"
-								onClick={() => onSettingClick?.(key)}
-								sx={{
-									borderRadius: "999px",
-									textTransform: "none",
-									fontSize: 12,
-									fontWeight: 600,
-									flexShrink: 0,
-									borderColor: "#818384",
-									color: "#d7dadc",
-									"&:hover": { borderColor: "#d7dadc", backgroundColor: "rgba(215,218,220,0.05)" },
-								}}
-							>
-								Update
-							</Button>
-						</Box>
-					))}
-				</Stack>
+						<Stack spacing={1.5}>
+							{SETTINGS_ITEMS.map(({ key, label, sub }) => (
+								<Box key={key} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 1 }}>
+									<Box sx={{ minWidth: 0 }}>
+										<Typography sx={{ fontSize: 14, color: "#d7dadc", fontWeight: 500 }}>{label}</Typography>
+										{sub && <Typography sx={{ fontSize: 11, color: "#818384" }}>{sub}</Typography>}
+									</Box>
+									<Button
+										size="small"
+										variant="outlined"
+										onClick={() => onSettingClick?.(key)}
+										sx={{
+											borderRadius: "999px",
+											textTransform: "none",
+											fontSize: 12,
+											fontWeight: 600,
+											flexShrink: 0,
+											borderColor: "#818384",
+											color: "#d7dadc",
+											"&:hover": { borderColor: "#d7dadc", backgroundColor: "rgba(215,218,220,0.05)" },
+										}}
+									>
+										Update
+									</Button>
+								</Box>
+							))}
+						</Stack>
 
-				<Divider sx={{ borderColor: "#2a2a2a", my: 2.5 }} />
+						<Divider sx={{ borderColor: "#2a2a2a", my: 2.5 }} />
+					</>
+				)}
 
 				<Link component={RouterLink} to="/" underline="hover" sx={{ color: "#818384", fontSize: 13 }}>
 					- Back to home

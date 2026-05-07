@@ -35,7 +35,11 @@ const postSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }],
-        
+        community: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Community",
+            required: true,  // Every post MUST be in a community
+        },
     },
         {
             
