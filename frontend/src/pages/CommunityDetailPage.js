@@ -5,16 +5,14 @@ import Navbar from "../components/layout/Navbar";
 import LeftSidebar from "../components/layout/LeftSidebar";
 import RightSidebar from "../components/layout/RightSidebar";
 import { useAuth } from "../context/AuthContext";
-import CreatePostForm from "../components/posts/CreatePostForm";
 import PostList from "../components/posts/PostList";
 import CommunityHeader from "../components/communities/CommunityHeader";
 import { communityService } from "../services/communityService";
 
 function CommunityDetailPage() {
     const { communityId } = useParams();
-    const [refresh, setRefresh] = useState(0);
     const [community, setCommunity] = useState(null);
-    const { user, isAuthenticated } = useAuth();
+    const { user } = useAuth();
 
     useEffect(() => {
         fetchCommunity();
@@ -68,23 +66,14 @@ function CommunityDetailPage() {
                         onUpdate={fetchCommunity}
                     />
 
-                    <Box sx={{ py: 4, maxWidth: "700px", margin: "0 auto", px: 2 }}>
-                        {/* Show create form only if logged in */}
-                        {isAuthenticated && (
-                            <Box sx={{ mb: 3 }}>
-                                <CreatePostForm 
-                                    communityId={communityId} 
-                                    onPostCreated={() => setRefresh(r => r + 1)} 
-                                />
-                            </Box>
-                        )}
-
-                        {/* Post list filtered by community */}
-                        <PostList communityId={communityId} refresh={refresh} />
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "flex-start", gap: 3, py: 4, px: 2 }}>
+                        <Box sx={{ width: "100%", maxWidth: "700px" }}>
+                            {/* Post list filtered by community */}
+                            <PostList communityId={communityId} />
+                        </Box>
+                        <RightSidebar />
                     </Box>
                 </Box>
-
-                <RightSidebar />
             </Box>
         </Box>
     );
