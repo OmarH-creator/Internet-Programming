@@ -4,6 +4,9 @@ import HomePage from "../pages/HomePage";
 import ProfilePage from "../pages/ProfilePage";
 import PostDetailPage from "../pages/PostDetailPage";
 import SettingsPage from "../pages/SettingsPage";
+import CommunitiesPage from "../pages/CommunitiesPage";
+import CommunityDetailPage from "../pages/CommunityDetailPage";
+import CreatePostPage from "../pages/CreatePostPage";
 
 function AppRoutes() {
   return (
@@ -13,6 +16,9 @@ function AppRoutes() {
       <Route path="/profile/:username" element={<ProfilePage />} />
       <Route path="/post/:postId" element={<PostDetailPage />} />
       <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/communities" element={<CommunitiesPage />} />
+      <Route path="/community/:communityId" element={<CommunityDetailPage />} />
+      <Route path="/submit" element={<CreatePostPage />} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

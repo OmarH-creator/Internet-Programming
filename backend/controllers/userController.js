@@ -28,6 +28,23 @@ const getMe = async (req, res) => {
     });
   }
 };
+// part for handeling the search bar 
+const searchUsers = async (req, res) => {
+  try {
+    const query = req.query.q;
+    const users = await userService.searchUsers(query);
+    
+    return res.status(200).json({
+      success: true,
+      data: { users }
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Search failed"
+    });
+  }
+};
 
 const updateAccount = async (req, res) => {
   try {
@@ -266,8 +283,63 @@ const verifyPassword = async (req, res) => {
   }
 };
 
+// Get user's posts by username
+const getUserPosts = async (req, res) => {
+  try {
+    const username = req.params.username;
+    const posts = await userService.getUserPosts(username);
+
+    return res.status(200).json({
+      success: true,
+      data: posts
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 404).json({
+      success: false,
+      message: error.message || "Failed to get user posts"
+    });
+  }
+};
+
+// Get user's comments by username
+const getUserComments = async (req, res) => {
+  try {
+    const username = req.params.username;
+    const comments = await userService.getUserComments(username);
+
+    return res.status(200).json({
+      success: true,
+      data: comments
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 404).json({
+      success: false,
+      message: error.message || "Failed to get user comments"
+    });
+  }
+};
+
+// Get user profile by username
+const getUserByUsername = async (req, res) => {
+  try {
+    const username = req.params.username;
+    const user = await userService.getUserByUsername(username);
+
+    return res.status(200).json({
+      success: true,
+      data: { user }
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 404).json({
+      success: false,
+      message: error.message || "User not found"
+    });
+  }
+};
+
 module.exports = {
   getMe,
+  searchUsers,
   updateAccount,
   updateProfile,
   changePassword,
@@ -275,5 +347,8 @@ module.exports = {
   deleteAccount,
   updatePhoneNumber,
   uploadAvatar,
-  uploadBanner
+  uploadBanner,
+  getUserPosts,
+  getUserComments,
+  getUserByUsername
 };

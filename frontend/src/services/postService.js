@@ -11,7 +11,10 @@ const fileToBase64 = (file) => {
 };
 
 export const postService = {
-    getAllPosts: () => api.get('/posts'),
+    getAllPosts: (communityId) => {
+        const url = communityId ? `/posts?communityId=${communityId}` : '/posts';
+        return api.get(url);
+    },
     getPostByID: (postId) => api.get(`/posts/${postId}`),
     createPost: async (postData) => {
         // Convert image to base64 if present

@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Box, Container } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import { userService } from "../services/userService";
 
-import ProfileNavbar from "../components/profile/ProfileNavbar";
+import Navbar from "../components/layout/Navbar";
 import ProfileLeftPanel from "../components/profile/ProfileLeftPanel";
 import ProfileHero from "../components/profile/ProfileHero";
 import ProfileFeed from "../components/profile/ProfileFeed";
@@ -27,6 +27,10 @@ export default function ProfilePage() {
   const { username: routeUsername } = useParams(); // present on /profile/:username
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // State for viewed user data
+  const [viewedUser, setViewedUser] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+
   // Local image previews (blob URLs) while upload is in progress
   const [avatarPreview, setAvatarPreview] = useState("");
   const [bannerPreview, setBannerPreview] = useState("");
@@ -36,10 +40,34 @@ export default function ProfilePage() {
   const isOwner = isAuthenticated && authUser?.username === viewedUsername;
   const basePath = routeUsername ? `/profile/${routeUsername}` : "/profile";
 
+  // Use viewedUser data if viewing someone else, otherwise use authUser
+  const displayUser = routeUsername ? viewedUser : authUser;
+
   const tabs = useMemo(() => ALL_TABS.filter((t) => t.public || isOwner), [isOwner]);
 
   const requestedTab = (searchParams.get("tab") || "overview").toLowerCase();
   const activeTab = tabs.find((t) => t.key === requestedTab)?.key ?? tabs[0].key;
+
+  // ── Fetch viewed user data ─────────────────────────────────────────────────
+  useEffect(() => {
+    // If viewing someone else's profile, fetch their data
+    if (routeUsername && routeUsername !== authUser?.username) {
+      setLoadingUser(true);
+      userService.getUserByUsername(routeUsername)
+        .then(response => {
+          setViewedUser(response.data.data.user);
+          setLoadingUser(false);
+        })
+        .catch(error => {
+          console.error("Failed to load user:", error);
+          setLoadingUser(false);
+        });
+    } else {
+      // Viewing own profile, use authUser
+      setViewedUser(authUser);
+      setLoadingUser(false);
+    }
+  }, [routeUsername, authUser]);
 
   // ── Handlers ───────────────────────────────────────────────────────────────
   const handleTabChange = (key) => {
@@ -109,52 +137,65 @@ export default function ProfilePage() {
   };
 
   // ── Render ─────────────────────────────────────────────────────────────────
+  if (loadingUser) {
+    return (
+      <Box sx={{ minHeight: "100vh", backgroundColor: "#030303", color: "#d7dadc", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p>Loading profile...</p>
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#030303", color: "#d7dadc" }}>
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#030303", color: "#d7dadc", display: "flex", flexDirection: "column" }}>
       {/* Navbar */}
-      <ProfileNavbar searchScope={viewedUsername} />
+      <Navbar searchScope={viewedUsername} />
 
-      <Container maxWidth="xl" sx={{ py: 3 }}>
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", lg: "260px minmax(0, 1fr) 340px" },
-            gap: 3,
-            alignItems: "start"
-          }}
-        >
-          {/* Left sidebar (placeholder) */}
-          <ProfileLeftPanel />
+      <Box sx={{ display: "flex", flexGrow: 1, pt: "56px" }}>
+        {/* Left sidebar (flush to the left) */}
+        <ProfileLeftPanel />
 
-          {/* Center — hero + feed */}
-          <Box>
-            <ProfileHero
-              username={viewedUsername}
-              avatarUrl={avatarPreview || authUser?.avatarUrl || authUser?.avatar || ""}
-              isOwner={isOwner}
-              tabs={tabs}
-              activeTab={activeTab}
-              basePath={basePath}
-              onTabChange={handleTabChange}
-              onAvatarChange={handleAvatarChange}
-            />
+        {/* Center content wrapper */}
+        <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
+          <Container maxWidth="lg" sx={{ py: 3 }}>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 1fr) 340px" },
+                gap: 3,
+                alignItems: "start"
+              }}
+            >
+              {/* Center — hero + feed */}
+              <Box>
+                <ProfileHero
+                  username={viewedUsername}
+                  avatarUrl={isOwner && avatarPreview ? avatarPreview : (displayUser?.avatarUrl || displayUser?.avatar || "")}
+                  isOwner={isOwner}
+                  tabs={tabs}
+                  activeTab={activeTab}
+                  basePath={basePath}
+                  onTabChange={handleTabChange}
+                  onAvatarChange={handleAvatarChange}
+                />
 
-            <ProfileFeed activeTab={activeTab} />
-          </Box>
+                <ProfileFeed activeTab={activeTab} username={viewedUsername} />
+              </Box>
 
-          {/* Right sidebar */}
-          <ProfileSideCard
-            username={viewedUsername}
-            karma={authUser?.karma ?? 0}
-            postKarma={authUser?.postKarma ?? 0}
-            createdAt={authUser?.createdAt}
-            bannerUrl={bannerPreview || authUser?.bannerUrl || authUser?.banner || ""}
-            isOwner={isOwner}
-            onBannerChange={handleBannerChange}
-            onSettingClick={handleSettingClick}
-          />
+              {/* Right sidebar */}
+              <ProfileSideCard
+                username={viewedUsername}
+                karma={displayUser?.karma ?? 0}
+                postKarma={displayUser?.postKarma ?? 0}
+                createdAt={displayUser?.createdAt}
+                bannerUrl={isOwner && bannerPreview ? bannerPreview : (displayUser?.bannerUrl || displayUser?.banner || "")}
+                isOwner={isOwner}
+                onBannerChange={handleBannerChange}
+                onSettingClick={handleSettingClick}
+              />
+            </Box>
+          </Container>
         </Box>
-      </Container>
+      </Box>
     </Box>
   );
 }

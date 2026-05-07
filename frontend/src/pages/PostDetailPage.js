@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { AppBar, Toolbar, Typography, IconButton, Box } from "@mui/material";
+import { AppBar, Toolbar, Typography, IconButton, Box, Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { postService } from "../services/postService";
 import { commentService } from "../services/commentService";
 import { useAuth } from "../context/AuthContext";
+import ProfileCircle from "../components/common/ProfileCircle";
 
 function PostDetailPage() {
   const { postId } = useParams();
@@ -224,20 +225,29 @@ function PostDetailPage() {
           >
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "20px" }}>
-            r/test
+          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "20px", flexGrow: 1 }}>
+            {post.community ? `r/${post.community.name}` : 'r/test'}
           </Typography>
+          <Button 
+            sx={{ color: '#d7dadc', textTransform: 'none' }}
+            onClick={() => navigate("/communities")}
+          >
+            Communities
+          </Button>
         </Toolbar>
       </AppBar>
 
       {/* Post content */}
       <Box sx={{ maxWidth: "600px", margin: "0 auto", p: 3 }}>
         {/* Author and date */}
-        <p style={{ color: "#818384", fontSize: "12px", margin: "0 0 12px 0" }}>
-          <strong style={{ color: "#d7dadc" }}>u/{post.author?.username}</strong>
-          &nbsp;·&nbsp;
-          {new Date(post.createdAt).toLocaleDateString()}
-        </p>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+          <ProfileCircle user={post.author} size={32} />
+          <p style={{ color: "#818384", fontSize: "12px", margin: "0" }}>
+            <strong style={{ color: "#d7dadc" }}>u/{post.author?.username}</strong>
+            &nbsp;·&nbsp;
+            {new Date(post.createdAt).toLocaleDateString()}
+          </p>
+        </div>
 
         {/* Title */}
         <h1 style={{ 
@@ -542,21 +552,24 @@ function CommentThread({
         }}
       >
         {/* Comment author and date */}
-        <p style={{ color: "#818384", fontSize: isNested ? "11px" : "12px", margin: "0 0 8px 0" }}>
-          <strong style={{ color: "#d7dadc" }}>u/{comment.author?.username}</strong>
-          {post && post.author?._id === comment.author?._id && (
-            <span style={{
-              marginLeft: "6px",
-              color: "#0079d3",
-              fontSize: isNested ? "11px" : "12px",
-              fontWeight: "700"
-            }}>
-              OP
-            </span>
-          )}
-          &nbsp;·&nbsp;
-          {new Date(comment.createdAt).toLocaleDateString()}
-        </p>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+          <ProfileCircle user={comment.author} size={isNested ? 18 : 20} />
+          <p style={{ color: "#818384", fontSize: isNested ? "11px" : "12px", margin: "0" }}>
+            <strong style={{ color: "#d7dadc" }}>u/{comment.author?.username}</strong>
+            {post && post.author?._id === comment.author?._id && (
+              <span style={{
+                marginLeft: "6px",
+                color: "#0079d3",
+                fontSize: isNested ? "11px" : "12px",
+                fontWeight: "700"
+              }}>
+                OP
+              </span>
+            )}
+            &nbsp;·&nbsp;
+            {new Date(comment.createdAt).toLocaleDateString()}
+          </p>
+        </div>
 
         {/* Comment text */}
         <p style={{ 

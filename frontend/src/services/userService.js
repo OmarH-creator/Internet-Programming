@@ -26,5 +26,12 @@ export const userService = {
   },
 
   changePassword: (payload) => api.patch("/users/me/password", payload),
-  deleteAccount: (payload) => api.delete("/users/me", { data: payload })
+  deleteAccount: (payload) => api.delete("/users/me", { data: payload }),
+
+  // Get user's posts and comments
+  getUserPosts: (username) => api.get(`/users/${username}/posts`),
+  getUserComments: (username) => api.get(`/users/${username}/comments`),
+
+  // Get user by username (for viewing other profiles)
+  getUserByUsername: (username) => api.get(`/users/${username}`)
 };
