@@ -72,11 +72,27 @@ const searchCommunities = async (query) => {
     return communities;
 };
 
+const updateCommunityProfile = async (communityId, userId, updateData) => {
+    const community = await Community.findById(communityId);
+    if (!community) {
+        throw createError("Community not found", 404);
+    }
+
+    if (community.creator.toString() !== userId.toString()) {
+        throw createError("Only the creator can update the community profile", 403);
+    }
+
+    Object.assign(community, updateData);
+    await community.save();
+    return community;
+};
+
 module.exports = {
     createCommunity,
     getAllCommunities,
     getCommunityById,
     joinCommunity,
     leaveCommunity,
-    searchCommunities
+    searchCommunities,
+    updateCommunityProfile
 };
