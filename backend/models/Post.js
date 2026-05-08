@@ -40,6 +40,16 @@ const postSchema = new mongoose.Schema(
             ref: "Community",
             required: true,  // Every post MUST be in a community
         },
+        // AI-generated summary of the post
+        summary: {
+            type: String,
+            default: null,
+        },
+        // Flag to indicate if summary is being generated
+        isSummarizing: {
+            type: Boolean,
+            default: false,
+        },
     },
         {
             
