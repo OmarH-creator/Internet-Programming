@@ -1,55 +1,78 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Box, Typography, List, ListItem, ListItemAvatar, Avatar, ListItemText, Link, Button, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import "../../styles/layout.css";
 import { communityService } from "../../services/communityService";
+import CreateCommunityModal from "../communities/CreateCommunityModal";
+import { useAuth } from "../../context/AuthContext";
 
 const FALLBACK_COLORS = ["#FF4500", "#FF69B4", "#003791", "#A3AAAE", "#FF8C00", "#46D160", "#0DD3BB", "#2259FF"];
 
 function RightSidebar() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [popularCommunities, setPopularCommunities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+
+  const fetchCommunities = useCallback(async () => {
+    try {
+      const response = await communityService.getAllCommunities();
+      if (response.data && response.data.data) {
+        const communities = response.data.data;
+        
+        // Sort by number of members descending and take top 5
+        const sorted = communities.sort((a, b) => (b.members?.length || 0) - (a.members?.length || 0)).slice(0, 5);
+        
+        setPopularCommunities(sorted);
+      }
+    } catch (error) {
+      console.error("Failed to fetch communities:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchCommunities = async () => {
-      try {
-        const response = await communityService.getAllCommunities();
-        if (response.data && response.data.data) {
-          const communities = response.data.data;
-          
-          // Sort by number of members descending and take top 5
-          const sorted = communities.sort((a, b) => (b.members?.length || 0) - (a.members?.length || 0)).slice(0, 5);
-          
-          setPopularCommunities(sorted);
-        }
-      } catch (error) {
-        console.error("Failed to fetch communities:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCommunities();
-  }, []);
+  }, [fetchCommunities]);
+
+  const handleCreateCommunity = async (communityData) => {
+    try {
+      await communityService.createCommunity(communityData);
+      fetchCommunities();
+      setCreateModalOpen(false);
+    } catch (error) {
+      console.error("Error creating community:", error);
+    }
+  };
 
   return (
     <Box className="right-sidebar-container">
       {/* Popular Communities Card */}
       <Box className="popular-communities-card">
-        <Typography 
-          variant="overline" 
-          sx={{ 
-            color: "#818384", 
-            fontWeight: 700, 
-            letterSpacing: "0.5px",
-            display: "block",
-            mb: 1
-          }}
-        >
-          POPULAR COMMUNITIES
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+          <Typography 
+            variant="overline" 
+            sx={{ 
+              color: "#818384", 
+              fontWeight: 700, 
+              letterSpacing: "0.5px",
+            }}
+          >
+            POPULAR COMMUNITIES
+          </Typography>
+          {isAuthenticated && (
+            <Button 
+              size="small" 
+              onClick={() => setCreateModalOpen(true)}
+              sx={{ color: "#d7dadc", textTransform: 'none', fontWeight: 'bold', minWidth: 'auto', p: 0.5 }}
+            >
+              Create +
+            </Button>
+          )}
+        </Box>
 
         <List disablePadding>
           {loading ? (
@@ -97,7 +120,11 @@ function RightSidebar() {
             })
           )}
         </List>
-        <Button variant="text" className="community-see-more-btn">
+        <Button 
+          variant="text" 
+          className="community-see-more-btn"
+          onClick={() => navigate('/communities')}
+        >
           See more
         </Button>
       </Box>
@@ -115,6 +142,11 @@ function RightSidebar() {
         </Typography>
       </Box>
 
+      <CreateCommunityModal 
+        open={createModalOpen} 
+        handleClose={() => setCreateModalOpen(false)} 
+        onCreate={handleCreateCommunity}
+      />
     </Box>
   );
 }

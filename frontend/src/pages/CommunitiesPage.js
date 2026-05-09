@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Typography, Button, Box } from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
+import { Typography, Box } from "@mui/material";
 import Navbar from "../components/layout/Navbar";
 import LeftSidebar from "../components/layout/LeftSidebar";
 import RightSidebar from "../components/layout/RightSidebar";
 import { useAuth } from "../context/AuthContext";
 import CommunityList from "../components/communities/CommunityList";
-import CreateCommunityModal from "../components/communities/CreateCommunityModal";
 import { communityService } from "../services/communityService";
 
 function CommunitiesPage() {
-    const navigate = useNavigate();
-    const [createModalOpen, setCreateModalOpen] = useState(false);
     const [communities, setCommunities] = useState([]);
-    const { user, isAuthenticated } = useAuth();
+    const { user } = useAuth();
 
     useEffect(() => {
         fetchCommunities();
@@ -26,15 +21,6 @@ function CommunitiesPage() {
             setCommunities(response.data.data);
         } catch (error) {
             console.error("Error fetching communities:", error);
-        }
-    };
-
-    const handleCreateCommunity = async (communityData) => {
-        try {
-            await communityService.createCommunity(communityData);
-            fetchCommunities();
-        } catch (error) {
-            console.error("Error creating community:", error);
         }
     };
 
@@ -69,16 +55,6 @@ function CommunitiesPage() {
                             <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
                                 Browse Communities
                             </Typography>
-                            {isAuthenticated && (
-                                <Button 
-                                    variant="contained" 
-                                    startIcon={<AddIcon />}
-                                    onClick={() => setCreateModalOpen(true)}
-                                    sx={{ borderRadius: 20 }}
-                                >
-                                    Create Community
-                                </Button>
-                            )}
                         </Box>
                         <CommunityList 
                             communities={communities} 
@@ -91,12 +67,6 @@ function CommunitiesPage() {
 
                 <RightSidebar />
             </Box>
-
-            <CreateCommunityModal 
-                open={createModalOpen} 
-                handleClose={() => setCreateModalOpen(false)} 
-                onCreate={handleCreateCommunity}
-            />
         </Box>
     );
 }
