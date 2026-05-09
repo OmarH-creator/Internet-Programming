@@ -27,15 +27,32 @@ import WorkIcon from '@mui/icons-material/Work';
 import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined';
 import LanguageIcon from '@mui/icons-material/Language';
 
+import AddIcon from "@mui/icons-material/Add";
+
 import { useNavigate } from "react-router-dom";
 import "../../styles/layout.css";
+import { useAuth } from "../../context/AuthContext";
+import CreateCommunityModal from "../communities/CreateCommunityModal";
+import { communityService } from "../../services/communityService";
 
 function LeftSidebar() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [resourcesOpen, setResourcesOpen] = useState(true);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const handleResourcesClick = () => {
     setResourcesOpen(!resourcesOpen);
+  };
+
+  const handleCreateCommunity = async (communityData) => {
+    try {
+      await communityService.createCommunity(communityData);
+      setCreateModalOpen(false);
+      // Optionally we could refresh communities or navigate, but keeping it simple as it was
+    } catch (error) {
+      console.error("Error creating community:", error);
+    }
   };
 
   const navItems = [
@@ -74,6 +91,23 @@ function LeftSidebar() {
             </ListItemButton>
           </ListItem>
         ))}
+
+        {isAuthenticated && (
+          <ListItem disablePadding sx={{ mb: 0.5 }}>
+            <ListItemButton 
+              className="sidebar-list-item-btn"
+              onClick={() => setCreateModalOpen(true)}
+            >
+              <ListItemIcon sx={{ minWidth: 40 }}>
+                <AddIcon sx={{ color: "#d7dadc" }} />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Create Community" 
+                primaryTypographyProps={{ fontSize: "14px", fontWeight: 400 }} 
+              />
+            </ListItemButton>
+          </ListItem>
+        )}
 
         <Divider sx={{ borderColor: "#2a3236", my: 2, mx: 2 }} />
 
@@ -115,6 +149,12 @@ function LeftSidebar() {
           </ListItemButton>
         </ListItem>
       </List>
+
+      <CreateCommunityModal 
+        open={createModalOpen} 
+        handleClose={() => setCreateModalOpen(false)} 
+        onCreate={handleCreateCommunity}
+      />
     </Box>
   );
 }

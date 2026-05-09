@@ -169,6 +169,44 @@ const uploadCommunityBanner = async (req, res) => {
     }
 };
 
+const kickMember = async (req, res) => {
+    try {
+        const communityId = req.params.id;
+        const targetUserId = req.params.userId;
+        const adminId = req.user._id;
+        const community = await communityService.kickMember(communityId, adminId, targetUserId);
+        return res.status(200).json({
+            success: true,
+            message: "Member kicked successfully",
+            data: community,
+        });
+    } catch (error) {
+        return res.status(error.statusCode || 400).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+const promoteToAdmin = async (req, res) => {
+    try {
+        const communityId = req.params.id;
+        const targetUserId = req.params.userId;
+        const ownerId = req.user._id;
+        const community = await communityService.promoteToAdmin(communityId, ownerId, targetUserId);
+        return res.status(200).json({
+            success: true,
+            message: "Member promoted to admin successfully",
+            data: community,
+        });
+    } catch (error) {
+        return res.status(error.statusCode || 400).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 module.exports = {
     createCommunity,
     getAllCommunities,
@@ -177,5 +215,7 @@ module.exports = {
     leaveCommunity,
     searchCommunities,
     uploadCommunityAvatar,
-    uploadCommunityBanner
+    uploadCommunityBanner,
+    kickMember,
+    promoteToAdmin
 };

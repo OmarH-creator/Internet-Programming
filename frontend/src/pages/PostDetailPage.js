@@ -4,6 +4,7 @@ import { AppBar, Toolbar, Typography, IconButton, Box, Button } from "@mui/mater
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { postService } from "../services/postService";
 import { commentService } from "../services/commentService";
+import { communityService } from "../services/communityService";
 import { useAuth } from "../context/AuthContext";
 import ProfileCircle from "../components/common/ProfileCircle";
 
@@ -20,6 +21,7 @@ function PostDetailPage() {
   const [replyingTo, setReplyingTo] = useState(null); // Track which comment we're replying to
   const [replyText, setReplyText] = useState(""); // Text for reply
   const [openMenuId, setOpenMenuId] = useState(null); // Track which menu is open (for post and comments)
+  const [isJoined, setIsJoined] = useState(false); // Track if user joined the community
 
   // Load the post and comments
   useEffect(() => {
@@ -85,6 +87,38 @@ function PostDetailPage() {
     if (didUserUpvote()) return "#ff4500";
     if (didUserDownvote()) return "#7193ff";
     return "#1a1a1b";
+  };
+
+  // Join community handler
+  const handleJoinCommunity = () => {
+    if (!user) {
+      alert("Please log in to join communities");
+      return;
+    }
+
+    if (isJoined) {
+      // Leave community
+      communityService.leaveCommunity(post.community._id)
+        .then(() => {
+          setIsJoined(false);
+        })
+        .catch((error) => {
+          if (error.response?.status === 400) {
+            setIsJoined(false);
+          }
+        });
+    } else {
+      // Join community
+      communityService.joinCommunity(post.community._id)
+        .then(() => {
+          setIsJoined(true);
+        })
+        .catch((error) => {
+          if (error.response?.data?.message?.includes("already")) {
+            setIsJoined(true);
+          }
+        });
+    }
   };
 
   // Submit a comment
@@ -238,7 +272,44 @@ function PostDetailPage() {
       </AppBar>
 
       {/* Post content */}
-      <Box sx={{ maxWidth: "600px", margin: "0 auto", p: 3 }}>
+      <Box sx={{ maxWidth: "700px", margin: "0 auto", p: 3 }}>
+        {/* Community name with Join button */}
+        {post.community && (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+            <p style={{ color: "#d7dadc", fontSize: "14px", fontWeight: "700", margin: "0" }}>
+              r/{post.community.name}
+            </p>
+            
+            {/* Join/Joined button */}
+            <button
+              onClick={handleJoinCommunity}
+              style={{
+                backgroundColor: isJoined ? "#1a1a1b" : "#0079d3",
+                color: isJoined ? "#d7dadc" : "#ffffff",
+                border: isJoined ? "1px solid #343536" : "none",
+                borderRadius: "20px",
+                padding: "4px 12px",
+                fontSize: "12px",
+                fontWeight: "600",
+                cursor: "pointer",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={(e) => {
+                if (!isJoined) {
+                  e.currentTarget.style.backgroundColor = "#0060a8";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isJoined) {
+                  e.currentTarget.style.backgroundColor = "#0079d3";
+                }
+              }}
+            >
+              {isJoined ? "Joined" : "Join"}
+            </button>
+          </div>
+        )}
+
         {/* Author and date */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
           <ProfileCircle user={post.author} size={32} />
@@ -252,10 +323,10 @@ function PostDetailPage() {
         {/* Title */}
         <h1 style={{ 
           color: "#d7dadc", 
-          fontSize: "28px", 
-          fontWeight: "600", 
-          margin: "0 0 16px 0",
-          lineHeight: "1.3"
+          fontSize: "18px", 
+          fontWeight: "500", 
+          margin: "0 0 6px 0",
+          lineHeight: "1.2"
         }}>
           {post.title}
         </h1>
@@ -279,10 +350,10 @@ function PostDetailPage() {
         {post.body && (
           <p style={{ 
             color: "#d7dadc", 
-            fontSize: "16px", 
-            margin: "0 0 16px 0",
+            fontSize: "14px", 
+            margin: "0 0 12px 0",
             textAlign: "justify",
-            lineHeight: "1.6"
+            lineHeight: "1.5"
           }}>
             {post.body}
           </p>

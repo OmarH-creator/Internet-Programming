@@ -23,6 +23,11 @@ const CommunityHeader = ({ community, onJoin, onLeave, isMember, currentUserId, 
     if (!community) return null;
 
     const isCreator = community.creator === currentUserId || community.creator?._id === currentUserId;
+    const isAdmin = community.admins?.some(admin => {
+        const adminId = typeof admin === 'string' ? admin : admin._id;
+        return adminId === currentUserId;
+    });
+    const canEdit = isCreator || isAdmin;
 
     const handleFileChange = async (event, type) => {
         const file = event.target.files[0];
@@ -67,7 +72,7 @@ const CommunityHeader = ({ community, onJoin, onLeave, isMember, currentUserId, 
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                     />
                 )}
-                {isCreator && (
+                {canEdit && (
                     <>
                         <input
                             type="file"
@@ -113,7 +118,7 @@ const CommunityHeader = ({ community, onJoin, onLeave, isMember, currentUserId, 
                                 <GroupsIcon sx={{ fontSize: 45 }} />
                             )}
                         </Avatar>
-                        {isCreator && (
+                        {canEdit && (
                             <>
                                 <input
                                     type="file"

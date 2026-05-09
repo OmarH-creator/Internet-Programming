@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { postService } from "../../services/postService";
+import { communityService } from "../../services/communityService";
 import { useAuth } from "../../context/AuthContext";
 import ProfileCircle from "../common/ProfileCircle";
 import PostSummary from "./PostSummary";
@@ -12,6 +13,10 @@ function PostCard({ post, onPostDeleted, showFullContent = false }) {
   const [currentPost, setCurrentPost] = useState(post);
   const [openMenu, setOpenMenu] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState(null);
+  
+  // Track if user joined this community
+  // We'll update this when they click join/leave
+  const [isJoined, setIsJoined] = useState(false);
 
   // Upvote post
   const handleUpvote = () => {
@@ -33,6 +38,42 @@ function PostCard({ post, onPostDeleted, showFullContent = false }) {
       .catch(() => {
         alert("Failed to downvote. Please log in.");
       });
+  };
+
+  // Join community
+  const handleJoinCommunity = (e) => {
+    e.stopPropagation(); // Don't navigate to post when clicking join
+    
+    if (!user) {
+      alert("Please log in to join communities");
+      return;
+    }
+
+    if (isJoined) {
+      // Leave community
+      communityService.leaveCommunity(currentPost.community._id)
+        .then(() => {
+          setIsJoined(false);
+        })
+        .catch((error) => {
+          // If already left, just update the button
+          if (error.response?.status === 400) {
+            setIsJoined(false);
+          }
+        });
+    } else {
+      // Join community
+      communityService.joinCommunity(currentPost.community._id)
+        .then(() => {
+          setIsJoined(true);
+        })
+        .catch((error) => {
+          // If already joined, just update the button
+          if (error.response?.data?.message?.includes("already")) {
+            setIsJoined(true);
+          }
+        });
+    }
   };
 
   // Delete post
@@ -60,7 +101,16 @@ function PostCard({ post, onPostDeleted, showFullContent = false }) {
   const voteColor = userUpvoted ? "#ff4500" : userDownvoted ? "#7193ff" : "#1a1a1b";
 
   // Check if user is post author
-  const isAuthor = user && user.id === currentPost.author?._id;
+  const isAuthor = user && (user.id === currentPost.author?._id || user._id === currentPost.author?._id);
+
+  // Check if user is community owner or admin
+  const userId = user?.id || user?._id;
+  const isCommunityAdmin = user && currentPost.community && (
+    (currentPost.community.creator === userId || currentPost.community.creator?._id === userId) ||
+    currentPost.community.admins?.some(adminId => (adminId._id || adminId) === userId)
+  );
+
+  const canDelete = isAuthor || isCommunityAdmin;
 
   return (
     <div
@@ -79,11 +129,41 @@ function PostCard({ post, onPostDeleted, showFullContent = false }) {
     >
       {/* Community and Author */}
       <div style={{ marginBottom: "8px" }}>
-        {/* Community name - BOLD and on top */}
+        {/* Community name with Join button */}
         {currentPost.community && (
-          <p style={{ color: "#d7dadc", fontSize: "14px", fontWeight: "700", margin: "0 0 4px 0" }}>
-            r/{currentPost.community.name}
-          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+            <p style={{ color: "#d7dadc", fontSize: "14px", fontWeight: "700", margin: "0" }}>
+              r/{currentPost.community.name}
+            </p>
+            
+            {/* Join/Joined button */}
+            <button
+              onClick={handleJoinCommunity}
+              style={{
+                backgroundColor: isJoined ? "#1a1a1b" : "#0079d3",
+                color: isJoined ? "#d7dadc" : "#ffffff",
+                border: isJoined ? "1px solid #343536" : "none",
+                borderRadius: "20px",
+                padding: "4px 12px",
+                fontSize: "12px",
+                fontWeight: "600",
+                cursor: "pointer",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={(e) => {
+                if (!isJoined) {
+                  e.currentTarget.style.backgroundColor = "#0060a8";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isJoined) {
+                  e.currentTarget.style.backgroundColor = "#0079d3";
+                }
+              }}
+            >
+              {isJoined ? "Joined" : "Join"}
+            </button>
+          </div>
         )}
         
         {/* Author and date - below community */}
@@ -144,8 +224,8 @@ function PostCard({ post, onPostDeleted, showFullContent = false }) {
         />
       )}
 
-      {/* Body text after image (if image exists) */}
-      {currentPost.body && currentPost.image && (
+      {/* Body text after image (if image exists) - only show on detail page */}
+      {currentPost.body && currentPost.image && showFullContent && (
         <p style={{
           color: "#d7dadc",
           fontSize: "14px",
@@ -250,8 +330,8 @@ function PostCard({ post, onPostDeleted, showFullContent = false }) {
         )}
       </div>
 
-      {/* Delete button - only for post author */}
-      {isAuthor && (
+      {/* Delete button - only for post author or community admins */}
+      {canDelete && (
         <div
           onClick={(e) => e.stopPropagation()}
           style={{ position: "relative", display: "inline-block" }}

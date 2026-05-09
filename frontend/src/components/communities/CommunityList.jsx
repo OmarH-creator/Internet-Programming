@@ -1,79 +1,53 @@
 import React from 'react';
-import { 
-    List, 
-    ListItem, 
-    ListItemAvatar, 
-    ListItemText, 
-    Avatar, 
-    Button, 
-    Typography, 
-    Paper,
-    Box
-} from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Avatar, Typography, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import GroupsIcon from '@mui/icons-material/Groups';
+import '../../styles/communityList.css';
 
-const CommunityList = ({ communities, onJoin, onLeave, currentUserId }) => {
+const FALLBACK_COLORS = ["#FF4500", "#FF69B4", "#003791", "#A3AAAE", "#FF8C00", "#46D160", "#0DD3BB", "#2259FF"];
+
+const CommunityList = ({ communities }) => {
+    const navigate = useNavigate();
+
     return (
-        <Paper elevation={0} sx={{ p: 2, bgcolor: 'background.paper', borderRadius: 2 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-                Communities
-            </Typography>
-            <List>
-                {communities.map((community) => {
-                    const isMember = community.members?.includes(currentUserId);
+        <Box className="community-list-container">
+            <Box className="community-list">
+                {communities.map((community, index) => {
+                    const displayName = community.name.startsWith("r/") ? community.name : `r/${community.name}`;
+                    const avatarLetter = community.name.replace(/^r\//i, '').charAt(0).toUpperCase();
+                    const bgColor = FALLBACK_COLORS[index % FALLBACK_COLORS.length];
+
                     return (
-                        <ListItem 
+                        <Box
                             key={community._id}
-                            secondaryAction={
-                                currentUserId && (
-                                    isMember ? (
-                                        <Button 
-                                            variant="outlined" 
-                                            size="small" 
-                                            onClick={() => onLeave(community._id)}
-                                            sx={{ borderRadius: 20 }}
-                                        >
-                                            Leave
-                                        </Button>
-                                    ) : (
-                                        <Button 
-                                            variant="contained" 
-                                            size="small" 
-                                            onClick={() => onJoin(community._id)}
-                                            sx={{ borderRadius: 20 }}
-                                        >
-                                            Join
-                                        </Button>
-                                    )
-                                )
-                            }
+                            className="community-list-row"
+                            onClick={() => navigate(`/community/${community._id}`)}
                         >
-                            <ListItemAvatar>
-                                <Avatar sx={{ bgcolor: 'primary.main' }}>
-                                    {community.avatar ? <img src={community.avatar} alt={community.name} width="100%" /> : <GroupsIcon />}
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={
-                                    <Link to={`/community/${community._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', '&:hover': { textDecoration: 'underline' } }}>
-                                            r/{community.name}
-                                        </Typography>
-                                    </Link>
-                                }
-                                secondary={`${community.members?.length || 0} members`}
-                            />
-                        </ListItem>
+                            <Avatar
+                                src={community.avatar || undefined}
+                                className="community-list-avatar"
+                                sx={{ bgcolor: bgColor }}
+                            >
+                                {!community.avatar && avatarLetter}
+                            </Avatar>
+                            <Box className="community-list-info">
+                                <Typography className="community-list-name">
+                                    {displayName}
+                                </Typography>
+                                <Typography className="community-list-description">
+                                    {community.description || 'No description available'}
+                                </Typography>
+                            </Box>
+                        </Box>
                     );
                 })}
                 {communities.length === 0 && (
-                    <Box sx={{ py: 4, textAlign: 'center' }}>
-                        <Typography color="text.secondary">No communities found</Typography>
+                    <Box className="community-list-empty">
+                        <Typography>No communities found</Typography>
                     </Box>
                 )}
-            </List>
-        </Paper>
+            </Box>
+        </Box>
     );
 };
 

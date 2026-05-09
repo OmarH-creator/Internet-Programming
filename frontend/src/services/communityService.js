@@ -13,4 +13,6 @@ export const communityService = {
     uploadBanner: (communityId, formData) => api.post(`/communities/${communityId}/banner`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     }),
+    kickMember: (communityId, userId) => api.post(`/communities/${communityId}/kick/${userId}`),
+    promoteToAdmin: (communityId, userId) => api.post(`/communities/${communityId}/promote/${userId}`),
 };

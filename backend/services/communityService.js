@@ -16,7 +16,8 @@ const createCommunity = async ({ name, description, creatorId }) => {
         name,
         description,
         creator: creatorId,
-        members: [creatorId]
+        members: [creatorId],
+        admins: []
     });
     return community;
 };
@@ -28,7 +29,8 @@ const getAllCommunities = async () => {
 const getCommunityById = async (communityId) => {
     const community = await Community.findById(communityId)
         .populate("creator", "username")
-        .populate("members", "username avatar");
+        .populate("members", "username avatar")
+        .populate("admins", "username avatar");
     if (!community) {
         throw createError("Community not found", 404);
     }
@@ -57,6 +59,7 @@ const leaveCommunity = async (communityId, userId) => {
     }
 
     community.members = community.members.filter(id => id.toString() !== userId.toString());
+    community.admins = community.admins.filter(id => id.toString() !== userId.toString());
     await community.save();
     return community;
 };
@@ -78,11 +81,65 @@ const updateCommunityProfile = async (communityId, userId, updateData) => {
         throw createError("Community not found", 404);
     }
 
-    if (community.creator.toString() !== userId.toString()) {
-        throw createError("Only the creator can update the community profile", 403);
+    const isAdmin = community.admins.some(adminId => adminId.toString() === userId.toString());
+    const isCreator = community.creator.toString() === userId.toString();
+
+    if (!isCreator && !isAdmin) {
+        throw createError("Only the creator or admins can update the community profile", 403);
     }
 
     Object.assign(community, updateData);
+    await community.save();
+    return community;
+};
+
+const kickMember = async (communityId, adminId, targetUserId) => {
+    const community = await Community.findById(communityId);
+    if (!community) {
+        throw createError("Community not found", 404);
+    }
+
+    const isAdmin = community.admins.some(id => id.toString() === adminId.toString());
+    const isCreator = community.creator.toString() === adminId.toString();
+
+    if (!isCreator && !isAdmin) {
+        throw createError("Only the creator or admins can kick members", 403);
+    }
+
+    if (targetUserId.toString() === community.creator.toString()) {
+        throw createError("Cannot kick the community creator", 400);
+    }
+
+    const targetIsAdmin = community.admins.some(id => id.toString() === targetUserId.toString());
+    if (targetIsAdmin && !isCreator) {
+        throw createError("Only the creator can kick other admins", 403);
+    }
+
+    community.members = community.members.filter(id => id.toString() !== targetUserId.toString());
+    community.admins = community.admins.filter(id => id.toString() !== targetUserId.toString());
+    await community.save();
+    return community;
+};
+
+const promoteToAdmin = async (communityId, ownerId, targetUserId) => {
+    const community = await Community.findById(communityId);
+    if (!community) {
+        throw createError("Community not found", 404);
+    }
+
+    if (community.creator.toString() !== ownerId.toString()) {
+        throw createError("Only the creator can promote members to admin", 403);
+    }
+
+    if (!community.members.some(id => id.toString() === targetUserId.toString())) {
+        throw createError("User must be a member of the community", 400);
+    }
+
+    if (community.admins.some(id => id.toString() === targetUserId.toString())) {
+        return community; // Already an admin
+    }
+
+    community.admins.push(targetUserId);
     await community.save();
     return community;
 };
@@ -94,5 +151,7 @@ module.exports = {
     joinCommunity,
     leaveCommunity,
     searchCommunities,
-    updateCommunityProfile
+    updateCommunityProfile,
+    kickMember,
+    promoteToAdmin
 };
