@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { postService } from "../../services/postService";
 import { useAuth } from "../../context/AuthContext";
 import ProfileCircle from "../common/ProfileCircle";
+import PostSummary from "./PostSummary";
 
 // Reusable component to show a single post
 function PostCard({ post, onPostDeleted, showFullContent = false }) {
@@ -155,6 +156,11 @@ function PostCard({ post, onPostDeleted, showFullContent = false }) {
           {currentPost.body}
         </p>
       )}
+
+      {/* AI Summary Component */}
+      <div onClick={(e) => e.stopPropagation()}>
+        <PostSummary postId={currentPost._id} initialSummary={currentPost.summary} />
+      </div>
 
       {/* Vote buttons */}
       <div

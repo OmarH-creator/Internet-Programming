@@ -6,6 +6,7 @@ import LeftSidebar from "../components/layout/LeftSidebar";
 import RightSidebar from "../components/layout/RightSidebar";
 import { useAuth } from "../context/AuthContext";
 import PostList from "../components/posts/PostList";
+import ChatWidget from "../components/chat/ChatWidget";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -27,6 +28,9 @@ function HomePage() {
 
         <RightSidebar />
       </Box>
+
+      {/* Chat Widget */}
+      <ChatWidget />
     </Box>
   );
 }
