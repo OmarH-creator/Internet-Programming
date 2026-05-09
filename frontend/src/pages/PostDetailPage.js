@@ -22,6 +22,7 @@ function PostDetailPage() {
   const [replyText, setReplyText] = useState(""); // Text for reply
   const [openMenuId, setOpenMenuId] = useState(null); // Track which menu is open (for post and comments)
   const [isJoined, setIsJoined] = useState(false); // Track if user joined the community
+  const [membershipChecked, setMembershipChecked] = useState(false);
 
   // Load the post and comments
   useEffect(() => {
@@ -44,6 +45,24 @@ function PostDetailPage() {
         // Ignore error
       });
   }, [postId]);
+
+  // Check if user is a member when post loads
+  useEffect(() => {
+    if (user && post && post.community && !membershipChecked) {
+      communityService.getCommunityById(post.community._id)
+        .then(response => {
+          const community = response.data.data;
+          const isMember = community.members?.some(
+            memberId => (memberId._id || memberId) === user.id
+          );
+          setIsJoined(isMember);
+          setMembershipChecked(true);
+        })
+        .catch(() => {
+          setMembershipChecked(true);
+        });
+    }
+  }, [user, post, membershipChecked]);
 
   // Vote handlers
   const handleUpvote = () => {

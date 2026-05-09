@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { postService } from "../../services/postService";
 import { communityService } from "../../services/communityService";
@@ -15,8 +15,26 @@ function PostCard({ post, onPostDeleted, showFullContent = false }) {
   const [fullscreenImage, setFullscreenImage] = useState(null);
   
   // Track if user joined this community
-  // We'll update this when they click join/leave
   const [isJoined, setIsJoined] = useState(false);
+  const [membershipChecked, setMembershipChecked] = useState(false);
+
+  // Check if user is a member when component loads
+  useEffect(() => {
+    if (user && currentPost.community && !membershipChecked) {
+      communityService.getCommunityById(currentPost.community._id)
+        .then(response => {
+          const community = response.data.data;
+          const isMember = community.members?.some(
+            memberId => (memberId._id || memberId) === user.id
+          );
+          setIsJoined(isMember);
+          setMembershipChecked(true);
+        })
+        .catch(() => {
+          setMembershipChecked(true);
+        });
+    }
+  }, [user, currentPost.community, membershipChecked]);
 
   // Upvote post
   const handleUpvote = () => {
