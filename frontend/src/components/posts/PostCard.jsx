@@ -224,8 +224,8 @@ function PostCard({ post, onPostDeleted, showFullContent = false }) {
         />
       )}
 
-      {/* Body text after image (if image exists) */}
-      {currentPost.body && currentPost.image && (
+      {/* Body text after image (if image exists) - only show on detail page */}
+      {currentPost.body && currentPost.image && showFullContent && (
         <p style={{
           color: "#d7dadc",
           fontSize: "14px",
