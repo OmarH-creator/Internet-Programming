@@ -1,4 +1,5 @@
 const Post = require ('../models/Post');
+const Community = require('../models/Community');
 const { uploadImage } = require('../utils/uploadImage');
 
 const createError = (message, statusCode) => {
@@ -28,7 +29,7 @@ const getAllPosts = async (communityId) => {
     const query = communityId ? { community: communityId } : {};
     const posts = await Post.find(query)
         .populate ("author", "username avatar")
-        .populate ("community", "name")
+        .populate ("community", "name creator admins")
         .sort({createdAt: -1});
     
     // Add comment count to each post
@@ -49,7 +50,7 @@ const getAllPosts = async (communityId) => {
 const getPostByID = async (postId) => {
     const post = await Post.findById(postId)
         .populate("author", "username avatar")
-        .populate("community", "name");
+        .populate("community", "name creator admins");
     if (!post) {
         throw createError("Post not found", 404);
     }
@@ -61,7 +62,21 @@ const deletePost = async (postId, userId) => {
     if (!post) {
         throw createError("Post not found", 404);
     }
-    if (post.author.toString() !== userId.toString()) {
+    
+    let isAllowed = post.author.toString() === userId.toString();
+
+    if (!isAllowed && post.community) {
+        const community = await Community.findById(post.community);
+        if (community) {
+            const isCreator = community.creator.toString() === userId.toString();
+            const isAdmin = community.admins.some(adminId => adminId.toString() === userId.toString());
+            if (isCreator || isAdmin) {
+                isAllowed = true;
+            }
+        }
+    }
+
+    if (!isAllowed) {
         throw createError("Not allowed", 403);
     }
     await post.deleteOne();

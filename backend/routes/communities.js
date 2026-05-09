@@ -9,7 +9,9 @@ const {
     leaveCommunity,
     searchCommunities,
     uploadCommunityAvatar,
-    uploadCommunityBanner
+    uploadCommunityBanner,
+    kickMember,
+    promoteToAdmin
 } = require("../controllers/communityController");
 const { protect } = require("../middleware/auth");
 const upload = require("../middleware/upload");
@@ -22,5 +24,7 @@ router.post("/:id/join", protect, joinCommunity);
 router.post("/:id/leave", protect, leaveCommunity);
 router.post("/:id/avatar", protect, upload.single("image"), uploadCommunityAvatar);
 router.post("/:id/banner", protect, upload.single("image"), uploadCommunityBanner);
+router.post("/:id/kick/:userId", protect, kickMember);
+router.post("/:id/promote/:userId", protect, promoteToAdmin);
 
 module.exports = router;
