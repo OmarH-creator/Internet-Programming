@@ -1,0 +1,200 @@
+.community-modal-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 850px;
+    background-color: #1a1a1b;
+    box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2), 0px 24px 38px 3px rgba(0,0,0,0.14), 0px 9px 46px 8px rgba(0,0,0,0.12);
+    border-radius: 16px;
+    color: #d7dadc;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    padding: 32px;
+}
+
+.community-close-button {
+    position: absolute !important;
+    right: 16px !important;
+    top: 16px !important;
+    background-color: #2a3236 !important;
+    color: #d7dadc !important;
+    width: 32px !important;
+    height: 32px !important;
+}
+
+.community-close-button:hover {
+    background-color: #343c40 !important;
+}
+
+.community-header {
+    margin-bottom: 32px;
+    margin-top: 8px;
+}
+
+.community-title {
+    font-weight: bold !important;
+    margin-bottom: 8px !important;
+    color: #d7dadc !important;
+}
+
+.community-subtitle {
+    color: #818384 !important;
+    font-size: 15px !important;
+}
+
+.community-input-box {
+    background-color: #2a3236;
+    border-radius: 16px;
+    padding: 12px 16px;
+    position: relative;
+}
+
+.community-input-label {
+    color: #818384 !important;
+    font-size: 14px !important;
+    margin-bottom: 4px !important;
+    display: block !important;
+}
+
+.community-input-label span {
+    color: #ff4500;
+}
+
+.community-input-base {
+    color: #d7dadc !important;
+    font-size: 15px !important;
+    padding-bottom: 12px !important;
+}
+
+.community-char-count {
+    color: #818384 !important;
+    font-size: 12px !important;
+    position: absolute !important;
+    bottom: 12px;
+    right: 16px;
+}
+
+.community-description-box {
+    margin-top: 24px;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+}
+
+.community-description-input {
+    color: #d7dadc !important;
+    font-size: 15px !important;
+    align-items: flex-start !important;
+    flex-grow: 1 !important;
+    padding-bottom: 16px !important;
+}
+
+.community-preview-card {
+    background-color: #1a1a1b;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #343c40;
+    height: 100%;
+}
+
+.community-preview-banner {
+    height: 80px;
+    background-color: #2a3236;
+}
+
+.community-preview-content {
+    padding: 16px;
+    position: relative;
+}
+
+.community-preview-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #ff4500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: -28px;
+    border: 4px solid #1a1a1b;
+    color: white;
+    font-weight: bold;
+    font-size: 28px;
+}
+
+.community-preview-info {
+    margin-top: 28px;
+}
+
+.community-preview-name {
+    font-weight: bold !important;
+    font-size: 18px !important;
+    margin-bottom: 4px !important;
+}
+
+.community-preview-stats {
+    color: #818384 !important;
+    font-size: 13px !important;
+    margin-bottom: 16px !important;
+}
+
+.community-preview-desc {
+    color: #d7dadc !important;
+    font-size: 14px !important;
+    word-break: break-word;
+}
+
+.community-footer {
+    margin-top: auto;
+}
+
+.community-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #343c40;
+}
+
+.community-dot.active {
+    background-color: #d7dadc;
+}
+
+.community-btn-back {
+    border-radius: 20px !important;
+    color: #d7dadc !important;
+    background-color: #2a3236 !important;
+    text-transform: none !important;
+    font-weight: bold !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+}
+
+.community-btn-back:hover {
+    background-color: #343c40 !important;
+}
+
+.community-btn-create {
+    border-radius: 20px !important;
+    text-transform: none !important;
+    font-weight: bold !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+}
+
+.community-btn-create:not(:disabled) {
+    background-color: #d7dadc !important;
+    color: #1a1a1b !important;
+}
+
+.community-btn-create:not(:disabled):hover {
+    background-color: #ffffff !important;
+}
+
+.community-btn-create:disabled {
+    background-color: #2a3236 !important;
+    color: #818384 !important;
+}

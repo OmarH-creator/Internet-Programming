@@ -63,15 +63,7 @@ function RightSidebar() {
           >
             POPULAR COMMUNITIES
           </Typography>
-          {isAuthenticated && (
-            <Button 
-              size="small" 
-              onClick={() => setCreateModalOpen(true)}
-              sx={{ color: "#d7dadc", textTransform: 'none', fontWeight: 'bold', minWidth: 'auto', p: 0.5 }}
-            >
-              Create +
-            </Button>
-          )}
+          {/* Create button moved to LeftSidebar */}
         </Box>
 
         <List disablePadding>
