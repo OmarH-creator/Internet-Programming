@@ -18,3 +18,23 @@ lerna-debug.log*
 .next
 out
 
+# dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# environment variables
+.env
+*.env
+frontend/.env
+backend/.env
+frontend/.env.local
+backend/.env.local
+
+# React build output
+frontend/build/
+
+# Firebase cache/logs
+.firebase/
+firebase-debug.log
+
