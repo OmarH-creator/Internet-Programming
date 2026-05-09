@@ -60,7 +60,16 @@ function PostCard({ post, onPostDeleted, showFullContent = false }) {
   const voteColor = userUpvoted ? "#ff4500" : userDownvoted ? "#7193ff" : "#1a1a1b";
 
   // Check if user is post author
-  const isAuthor = user && user.id === currentPost.author?._id;
+  const isAuthor = user && (user.id === currentPost.author?._id || user._id === currentPost.author?._id);
+
+  // Check if user is community owner or admin
+  const userId = user?.id || user?._id;
+  const isCommunityAdmin = user && currentPost.community && (
+    (currentPost.community.creator === userId || currentPost.community.creator?._id === userId) ||
+    currentPost.community.admins?.some(adminId => (adminId._id || adminId) === userId)
+  );
+
+  const canDelete = isAuthor || isCommunityAdmin;
 
   return (
     <div
@@ -250,8 +259,8 @@ function PostCard({ post, onPostDeleted, showFullContent = false }) {
         )}
       </div>
 
-      {/* Delete button - only for post author */}
-      {isAuthor && (
+      {/* Delete button - only for post author or community admins */}
+      {canDelete && (
         <div
           onClick={(e) => e.stopPropagation()}
           style={{ position: "relative", display: "inline-block" }}
